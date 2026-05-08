@@ -1,0 +1,96 @@
+{
+  "description": "Policy boundary cases that must be validated identically by Python and Rust",
+  "max_reasonable_hops": 8,
+  "max_reasonable_results": 1000,
+  "valid_policies": [
+    {
+      "label": "minimal_valid",
+      "min_profit_bps": 0.0,
+      "max_hops": 2,
+      "min_liquidity": 0.0,
+      "max_notional": 1.0,
+      "max_results": 1
+    },
+    {
+      "label": "default_policy",
+      "min_profit_bps": 5.0,
+      "max_hops": 4,
+      "min_liquidity": 0.0,
+      "max_notional": 10000.0,
+      "max_results": 25
+    },
+    {
+      "label": "maximum_bounds",
+      "min_profit_bps": 100.0,
+      "max_hops": 8,
+      "min_liquidity": 1000.0,
+      "max_notional": 1000000.0,
+      "max_results": 1000
+    }
+  ],
+  "invalid_policies": [
+    {
+      "label": "max_hops_too_low",
+      "min_profit_bps": 5.0,
+      "max_hops": 1,
+      "min_liquidity": 0.0,
+      "max_notional": 10000.0,
+      "max_results": 25,
+      "expected_error": "max_hops must be at least 2"
+    },
+    {
+      "label": "max_hops_too_high",
+      "min_profit_bps": 5.0,
+      "max_hops": 99,
+      "min_liquidity": 0.0,
+      "max_notional": 10000.0,
+      "max_results": 25,
+      "expected_error": "max_hops must be at most 8"
+    },
+    {
+      "label": "max_results_too_low",
+      "min_profit_bps": 5.0,
+      "max_hops": 4,
+      "min_liquidity": 0.0,
+      "max_notional": 10000.0,
+      "max_results": 0,
+      "expected_error": "max_results must be at least 1"
+    },
+    {
+      "label": "max_results_too_high",
+      "min_profit_bps": 5.0,
+      "max_hops": 4,
+      "min_liquidity": 0.0,
+      "max_notional": 10000.0,
+      "max_results": 2000,
+      "expected_error": "max_results must be at most 1000"
+    },
+    {
+      "label": "negative_min_profit",
+      "min_profit_bps": -1.0,
+      "max_hops": 4,
+      "min_liquidity": 0.0,
+      "max_notional": 10000.0,
+      "max_results": 25,
+      "expected_error": "min_profit_bps must be non-negative"
+    },
+    {
+      "label": "negative_min_liquidity",
+      "min_profit_bps": 5.0,
+      "max_hops": 4,
+      "min_liquidity": -1.0,
+      "max_notional": 10000.0,
+      "max_results": 25,
+      "expected_error": "min_liquidity must be non-negative"
+    },
+    {
+      "label": "negative_max_notional",
+      "min_profit_bps": 5.0,
+      "max_hops": 4,
+      "min_liquidity": 0.0,
+      "max_notional": -1.0,
+      "max_results": 25,
+      "expected_error": "max_notional must be positive"
+    }
+  ]
+}

@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/ali-baneshi/defi-arbitrage-core/schemas/contract_validation_report.schema.json",
+  "title": "ContractValidationReport",
+  "type": "object",
+  "required": [
+    "manifest_path",
+    "artifacts_checked",
+    "languages",
+    "manifest_sha256",
+    "ok",
+    "findings"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "manifest_path": {
+      "type": "string"
+    },
+    "artifacts_checked": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "languages": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "solidity",
+          "vyper"
+        ]
+      }
+    },
+    "ok": {
+      "type": "boolean"
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/finding"
+      }
+    },
+    "manifest_sha256": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[a-f0-9]{64}$"
+    }
+  },
+  "$defs": {
+    "finding": {
+      "type": "object",
+      "required": [
+        "path",
+        "severity",
+        "code",
+        "message",
+        "line"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "severity": {
+          "type": "string",
+          "enum": [
+            "error",
+            "warning",
+            "info"
+          ]
+        },
+        "code": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "line": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
+        }
+      }
+    }
+  }
+}

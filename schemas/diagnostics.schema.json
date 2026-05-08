@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/ali-baneshi/defi-arbitrage-core/schemas/diagnostics.schema.json",
+  "title": "DiagnosticsReport",
+  "type": "object",
+  "required": ["arbcore_version", "python", "platform", "repository", "capabilities", "optional_tools", "resolved_policy", "validation_commands", "limits"],
+  "additionalProperties": false,
+  "properties": {
+    "arbcore_version": {"type": "string"},
+    "python": {"type": "object"},
+    "platform": {"type": "object"},
+    "repository": {
+      "type": "object",
+      "required": ["cwd", "default_snapshot_exists", "default_network", "contract_manifest_exists"],
+      "additionalProperties": false,
+      "properties": {
+        "cwd": {"type": "string"},
+        "default_snapshot_exists": {"type": "boolean"},
+        "default_network": {"type": "string", "minLength": 1, "maxLength": 64},
+        "contract_manifest_exists": {"type": "boolean"}
+      }
+    },
+    "capabilities": {
+      "type": "object",
+      "required": ["offline_snapshot_analysis", "structured_cli_errors", "contract_template_validation", "smart_contract_languages", "multi_network_snapshots", "live_trading", "contract_deployment", "public_release_ready_claimed"],
+      "additionalProperties": false,
+      "properties": {
+        "offline_snapshot_analysis": {"type": "boolean", "const": true},
+        "structured_cli_errors": {"type": "boolean", "const": true},
+        "contract_template_validation": {"type": "boolean"},
+        "smart_contract_languages": {"type": "array", "items": {"type": "string", "enum": ["solidity", "vyper"]}},
+        "multi_network_snapshots": {"type": "boolean", "const": true},
+        "live_trading": {"type": "boolean", "const": false},
+        "contract_deployment": {"type": "boolean", "const": false},
+        "public_release_ready_claimed": {"type": "boolean", "const": false}
+      }
+    },
+    "optional_tools": {"type": "object"},
+    "resolved_policy": {"$ref": "policy.schema.json"},
+    "validation_commands": {"type": "array", "items": {"type": "string"}},
+    "limits": {
+      "type": "object",
+      "required": ["max_hops", "max_results", "max_snapshot_edges"],
+      "additionalProperties": false,
+      "properties": {
+        "max_hops": {"type": "integer", "const": 8},
+        "max_results": {"type": "integer", "const": 1000},
+        "max_snapshot_edges": {"type": "integer", "const": 10000}
+      }
+    }
+  }
+}

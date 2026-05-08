@@ -1,0 +1,38 @@
+{
+  "description": "Source name/ID validation rules shared between Python and Rust",
+  "max_source_length": 120,
+  "valid_sources": [
+    "uniswap-v3",
+    "quickswap",
+    "sushiswap-polygon",
+    "balancer-v2",
+    "curve-aave-pool",
+    "dex-aggregator-1inch"
+  ],
+  "invalid_sources": [
+    {
+      "value": "",
+      "reason": "empty_source",
+      "expected_error": "source"
+    },
+    {
+      "value": "a",
+      "reason": "too_short_acceptable_but_unusual"
+    }
+  ],
+  "edge_cases": [
+    {
+      "label": "max_length_source",
+      "value": "x",
+      "repeat": 120,
+      "should_pass": true
+    },
+    {
+      "label": "exceeds_max_length",
+      "value": "x",
+      "repeat": 121,
+      "should_pass": false,
+      "expected_error": "source"
+    }
+  ]
+}

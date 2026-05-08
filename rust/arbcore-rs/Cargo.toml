@@ -1,0 +1,11 @@
+[package]
+name = "defi-arbitrage-core-rs"
+version = "0.1.0"
+edition = "2021"
+authors = ["Ali Baneshi <baneshi712@gmail.com>"]
+license = "MIT"
+description = "Optional Rust acceleration service for defi-arbitrage-core market snapshot analysis"
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"

@@ -1,0 +1,11 @@
+{
+    "manifest_path": "contracts/contract-manifest.json",
+    "artifacts_checked": 2,
+    "languages": [
+        "solidity",
+        "vyper"
+    ],
+    "manifest_sha256": "397efa951c76ccd23082e1f08c3973fbcd354deeb4da8cad7e95698eb0bc1838",
+    "ok": true,
+    "findings": []
+}

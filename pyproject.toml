@@ -1,0 +1,51 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "defi-arbitrage-core"
+version = "0.1.0"
+description = "A minimal, safe, extensible market opportunity analysis core for multi-network DeFi research and infrastructure."
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [{name = "Ali Baneshi", email = "baneshi712@gmail.com"}]
+maintainers = [{name = "Ali Baneshi", email = "baneshi712@gmail.com"}]
+keywords = ["arbitrage", "market-analysis", "risk", "plugins", "open-source"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Software Development :: Libraries",
+]
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "ruff>=0.4"]
+
+[project.scripts]
+defi-arbitrage-core = "defi_arbitrage_core.cli:main"
+arbcore = "arbcore.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/ali-baneshi/defi-arbitrage-core-public-mvp"
+Repository = "https://github.com/ali-baneshi/defi-arbitrage-core-public-mvp"
+Security = "https://github.com/ali-baneshi/defi-arbitrage-core-public-mvp/security/policy"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src", "."]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]

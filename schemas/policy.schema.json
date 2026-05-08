@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/ali-baneshi/defi-arbitrage-core/schemas/policy.schema.json",
+  "title": "RiskPolicy",
+  "type": "object",
+  "required": ["min_profit_bps", "max_hops", "min_liquidity", "max_notional", "max_results"],
+  "additionalProperties": false,
+  "properties": {
+    "min_profit_bps": {"type": "number", "minimum": 0},
+    "max_hops": {"type": "integer", "minimum": 2, "maximum": 8},
+    "min_liquidity": {"type": "number", "minimum": 0},
+    "max_notional": {"type": "number", "exclusiveMinimum": 0},
+    "max_results": {"type": "integer", "minimum": 1, "maximum": 1000}
+  }
+}

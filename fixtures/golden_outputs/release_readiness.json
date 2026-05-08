@@ -1,0 +1,178 @@
+{
+    "local_validation_ready": true,
+    "reviewer_ready": true,
+    "open_source_ready": false,
+    "public_release_ready": false,
+    "production_ready": false,
+    "maturity": "alpha-offline-mvp",
+    "checks": [
+        {
+            "command": "/usr/bin/python scripts/validate_repository.py",
+            "returncode": 0,
+            "stdout_json": null,
+            "stdout_tail": [
+                "repository metadata validation passed"
+            ],
+            "stderr_tail": []
+        },
+        {
+            "command": "/usr/bin/python scripts/validate_contracts.py --json",
+            "returncode": 0,
+            "stdout_json": {
+                "manifest_path": "contracts/contract-manifest.json",
+                "artifacts_checked": 2,
+                "languages": [
+                    "solidity",
+                    "vyper"
+                ],
+                "manifest_sha256": "xxxxxxxxxxxxxxxxxx",
+                "ok": true,
+                "findings": []
+            },
+            "stdout_tail": [
+                "  ],",
+                "  \"manifest_sha256\": \"xxxxxxxxxxxxxxxxxx\",",
+                "  \"ok\": true,",
+                "  \"findings\": []",
+                "}"
+            ],
+            "stderr_tail": []
+        },
+        {
+            "command": "/usr/bin/python scripts/validate_negative_cases.py",
+            "returncode": 0,
+            "stdout_json": null,
+            "stdout_tail": [
+                "negative validation checks passed"
+            ],
+            "stderr_tail": []
+        },
+        {
+            "command": "/usr/bin/python scripts/validate_schema_consistency.py",
+            "returncode": 0,
+            "stdout_json": null,
+            "stdout_tail": [
+                "schema consistency validation passed"
+            ],
+            "stderr_tail": []
+        },
+        {
+            "command": "/usr/bin/python scripts/demo_workflow.py",
+            "returncode": 0,
+            "stdout_json": {
+                "ok": true,
+                "steps": [
+                    {
+                        "command": "/usr/bin/python -m arbcore.cli examples/market_snapshot.json --json",
+                        "returncode": 0,
+                        "stdout_json": [
+                            {
+                                "path": [
+                                    "USDC",
+                                    "WETH",
+                                    "DAI",
+                                    "USDC"
+                                ],
+                                "venues": [
+                                    "dex-a",
+                                    "dex-b",
+                                    "dex-c"
+                                ],
+                                "gross_return": 1.0079427572346378,
+                                "profit_bps": 79.42757234637776,
+                                "limiting_liquidity": 100000.0,
+                                "estimated_capacity": 10000.0
+                            }
+                        ],
+                        "stderr": ""
+                    },
+                    {
+                        "command": "/usr/bin/python -m arbcore.cli examples/no_opportunity_snapshot.json --json",
+                        "returncode": 0,
+                        "stdout_json": [],
+                        "stderr": ""
+                    },
+                    {
+                        "command": "/usr/bin/python scripts/validate_contracts.py --json",
+                        "returncode": 0,
+                        "stdout_json": {
+                            "manifest_path": "contracts/contract-manifest.json",
+                            "artifacts_checked": 2,
+                            "languages": [
+                                "solidity",
+                                "vyper"
+                            ],
+                            "manifest_sha256": "xxxxxxxxxxxxxxxxxx",
+                            "ok": true,
+                            "findings": []
+                        },
+                        "stderr": ""
+                    },
+                    {
+                        "command": "/usr/bin/python -m arbcore.cli --diagnostics",
+                        "returncode": 0,
+                        "stdout_json": {
+                            "arbcore_version": "0.1.0",
+                            "python": {
+                                "version": "3.13.11",
+                                "executable": "/usr/bin/python"
+                            },
+                            "platform": {
+                                "system": "Linux",
+                                "release": "6.12"
+                            },
+                            "repository": {
+                                "cwd": "/root/defi-arbitrage-bot",
+                                "default_snapshot_exists": true,
+                                "contract_manifest_exists": true
+                            },
+                            "capabilities": {
+                                "offline_snapshot_analysis": true,
+                                "structured_cli_errors": true,
+                                "contract_template_validation": true,
+                                "smart_contract_languages": [
+                                    "solidity",
+                                    "vyper"
+                                ],
+                                "live_trading": false,
+                                "contract_deployment": false,
+                                "public_release_ready_claimed": false
+                            },
+                            "optional_tools": {
+                                "cargo": true,
+                                "pytest": false,
+                                "ruff": false
+                            },
+                            "resolved_policy": {
+                                "min_profit_bps": 5.0,
+                                "max_hops": 4,
+                                "min_liquidity": 0.0,
+                                "max_notional": 10000.0,
+                                "max_results": 25
+                            },
+                            "validation_commands": [
+                                "PYTHONPATH=src python scripts/validate_all.py --include-rust",
+                                "PYTHONPATH=src python scripts/validate_negative_cases.py",
+                                "PYTHONPATH=src python scripts/release_readiness.py --json"
+                            ],
+                            "limits": {
+                                "max_hops": 8,
+                                "max_results": 1000,
+                                "max_snapshot_edges": 10000
+                            }
+                        },
+                        "stderr": ""
+                    }
+                ]
+            },
+            "stdout_tail": [
+                "      },",
+                "      \"stderr\": \"\"",
+                "    }",
+                "  ]",
+                "}"
+            ],
+            "stderr_tail": []
+        }
+    ],
+

@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/ali-baneshi/defi-arbitrage-core/schemas/opportunity.schema.json",
+  "title": "OpportunityList",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": ["network", "path", "venues", "gross_return", "profit_bps", "limiting_liquidity", "estimated_capacity"],
+    "additionalProperties": false,
+    "properties": {
+      "network": {"type": "string", "minLength": 1, "maxLength": 64},
+      "path": {
+        "type": "array",
+        "minItems": 3,
+        "items": {"type": "string", "minLength": 1, "maxLength": 32}
+      },
+      "venues": {
+        "type": "array",
+        "minItems": 2,
+        "items": {"type": "string", "minLength": 1, "maxLength": 80}
+      },
+      "gross_return": {"type": "number"},
+      "profit_bps": {"type": "number"},
+      "limiting_liquidity": {"type": ["number", "null"], "minimum": 0},
+      "estimated_capacity": {"type": "number", "minimum": 0}
+    }
+  }
+}

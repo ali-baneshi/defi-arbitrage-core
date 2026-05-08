@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/ali-baneshi/defi-arbitrage-core/schemas/contract_manifest.schema.json",
+  "title": "ContractManifest",
+  "type": "object",
+  "required": ["schema_version", "language_metadata", "artifacts"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {"type": "integer", "const": 1},
+    "description": {"type": "string"},
+    "language_metadata": {
+      "type": "object",
+      "required": ["solidity", "vyper"],
+      "additionalProperties": false,
+      "properties": {
+        "solidity": {"$ref": "#/$defs/language_metadata"},
+        "vyper": {"$ref": "#/$defs/language_metadata"}
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/artifact"}
+    }
+  },
+  "$defs": {
+    "language_metadata": {
+      "type": "object",
+      "required": ["file_extension", "compiler_family", "compiler_required_locally", "validation_level"],
+      "additionalProperties": false,
+      "properties": {
+        "file_extension": {"type": "string", "enum": [".sol", ".vy"]},
+        "compiler_family": {"type": "string", "minLength": 1},
+        "compiler_required_locally": {"type": "boolean", "const": false},
+        "validation_level": {"type": "string", "const": "static-template-checks"}
+      }
+    },
+    "artifact": {
+      "type": "object",
+      "required": ["name", "language", "path", "artifact_type", "role", "description", "source_sha256"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "language": {"type": "string", "enum": ["solidity", "vyper"]},
+        "path": {"type": "string", "pattern": "^contracts/.+"},
+        "artifact_type": {"type": "string", "const": "source-template"},
+        "role": {"type": "string", "const": "template"},
+        "description": {"type": "string", "minLength": 1},
+        "source_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "entrypoints": {"type": "array", "items": {"type": "string"}},
+        "networks": {
+          "type": "array",
+          "items": {"type": "string", "enum": ["local"]},
+          "minItems": 1
+        },
+        "tags": {
+          "type": "array",
+          "items": {"type": "string"},
+          "allOf": [
+            {"contains": {"const": "template"}},
+            {"contains": {"const": "non-deployable-without-audit"}}
+          ]
+        }
+      }
+    }
+  }
+}

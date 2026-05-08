@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "description": "Offline smart-contract templates for reviewed integrations only. These artifacts are not compiled, deployed, or audited by arbcore.",
+  "language_metadata": {
+    "solidity": {
+      "file_extension": ".sol",
+      "compiler_family": "solc",
+      "compiler_required_locally": false,
+      "validation_level": "static-template-checks"
+    },
+    "vyper": {
+      "file_extension": ".vy",
+      "compiler_family": "vyper",
+      "compiler_required_locally": false,
+      "validation_level": "static-template-checks"
+    }
+  },
+  "artifacts": [
+    {
+      "name": "FlashArbExecutorSolidity",
+      "language": "solidity",
+      "path": "contracts/solidity/FlashArbExecutor.sol",
+      "artifact_type": "source-template",
+      "role": "template",
+      "description": "Security-first Solidity source-template for reviewed flash-arbitrage integrations; not audited for deployment.",
+      "source_sha256": "d1625d83a4acb93b49bb1bb7df1123d41339fd7951a4cfd82f5c8e21e354f036",
+      "entrypoints": [
+        "previewRoute",
+        "executeReviewedRoute"
+      ],
+      "networks": [
+        "local"
+      ],
+      "tags": [
+        "template",
+        "non-deployable-without-audit"
+      ]
+    },
+    {
+      "name": "FlashArbExecutorVyper",
+      "language": "vyper",
+      "path": "contracts/vyper/FlashArbExecutor.vy",
+      "artifact_type": "source-template",
+      "role": "template",
+      "description": "Security-first Vyper source-template for reviewed flash-arbitrage integrations; not audited for deployment.",
+      "source_sha256": "4e39f1c07cf7c85fdba74187ee1479d17a3b07a41704ca33a3fec4680b754d41",
+      "entrypoints": [
+        "preview_route",
+        "execute_reviewed_route"
+      ],
+      "networks": [
+        "local"
+      ],
+      "tags": [
+        "template",
+        "non-deployable-without-audit"
+      ]
+    }
+  ]
+}

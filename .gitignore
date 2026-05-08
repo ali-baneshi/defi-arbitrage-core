@@ -1,0 +1,46 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.venv/
+venv/
+dist/
+build/
+.venv/
+.venv*/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+*.pyc
+**/target/
+
+# Secrets and local state
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*.p12
+*.pfx
+*.sqlite
+*.db
+*.log
+*.jsonl
+
+# Generated and bulky artifacts
+models/
+data/
+logs/
+my-logs/
+node_modules/
+target/
+out/
+cache/
+artifacts/
+*.pth
+*.pt
+*.pkl
+rust/arbcore-rs/target/

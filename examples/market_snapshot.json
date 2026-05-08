@@ -1,0 +1,10 @@
+{
+  "source": "example-static-snapshot",
+  "network": "polygon",
+  "timestamp": "2026-05-05T00:00:00Z",
+  "edges": [
+    {"source": "USDC", "target": "WETH", "rate": 0.00025, "venue": "dex-a", "fee_bps": 30, "liquidity": 100000},
+    {"source": "WETH", "target": "DAI", "rate": 4050, "venue": "dex-b", "fee_bps": 30, "liquidity": 100000},
+    {"source": "DAI", "target": "USDC", "rate": 1.002, "venue": "dex-c", "fee_bps": 5, "liquidity": 100000}
+  ]
+}

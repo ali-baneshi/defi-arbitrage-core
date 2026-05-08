@@ -1,0 +1,10 @@
+{
+  "source": "example-base-snapshot",
+  "network": "base",
+  "timestamp": "2026-05-05T00:00:00Z",
+  "edges": [
+    {"source": "USDC", "target": "ETH", "rate": 0.000255, "venue": "dex-base-a", "fee_bps": 25, "liquidity": 85000},
+    {"source": "ETH", "target": "DAI", "rate": 3985, "venue": "dex-base-b", "fee_bps": 30, "liquidity": 90000},
+    {"source": "DAI", "target": "USDC", "rate": 1.003, "venue": "dex-base-c", "fee_bps": 5, "liquidity": 100000}
+  ]
+}

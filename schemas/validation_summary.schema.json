@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/ali-baneshi/defi-arbitrage-core/schemas/validation_summary.schema.json",
+  "title": "ValidationSummary",
+  "type": "object",
+  "required": ["ok", "checks"],
+  "additionalProperties": false,
+  "properties": {
+    "ok": {"type": "boolean"},
+    "checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "status", "command"],
+        "additionalProperties": false,
+        "properties": {
+          "name": {"type": "string", "minLength": 1},
+          "status": {"type": "string", "enum": ["passed", "failed", "skipped"]},
+          "command": {"type": "string", "minLength": 1}
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,50 @@
+{
+    "arbcore_version": "0.1.0",
+    "python": {
+        "version": "3.13.11",
+        "executable": "/usr/bin/python"
+    },
+    "platform": {
+        "system": "Linux",
+        "release": "6.12"
+    },
+    "repository": {
+        "cwd": "/root/defi-arbitrage-bot",
+        "default_snapshot_exists": true,
+        "contract_manifest_exists": true
+    },
+    "capabilities": {
+        "offline_snapshot_analysis": true,
+        "structured_cli_errors": true,
+        "contract_template_validation": true,
+        "smart_contract_languages": [
+            "solidity",
+            "vyper"
+        ],
+        "live_trading": false,
+        "contract_deployment": false,
+        "public_release_ready_claimed": false
+    },
+    "optional_tools": {
+        "cargo": true,
+        "pytest": false,
+        "ruff": false
+    },
+    "resolved_policy": {
+        "min_profit_bps": 5.0,
+        "max_hops": 4,
+        "min_liquidity": 0.0,
+        "max_notional": 10000.0,
+        "max_results": 25
+    },
+    "validation_commands": [
+        "PYTHONPATH=src python scripts/validate_all.py --include-rust",
+        "PYTHONPATH=src python scripts/validate_negative_cases.py",
+        "PYTHONPATH=src python scripts/release_readiness.py --json"
+    ],
+    "limits": {
+        "max_hops": 8,
+        "max_results": 1000,
+        "max_snapshot_edges": 10000
+    }
+}
