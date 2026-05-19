@@ -1,5 +1,8 @@
 name: CI
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 on:
   pull_request:
   push:
@@ -39,10 +42,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - run: python -m pip install --upgrade pip setuptools wheel
-      - run: pip install -e '.[dev]' --no-build-isolation
-      - run: pip install pip-audit
-      - run: pip-audit --strict
+      - run: python -m pip install --upgrade pip pip-audit
+      - run: pip-audit --strict .
       - uses: gitleaks/gitleaks-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
