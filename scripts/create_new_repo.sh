@@ -6,10 +6,10 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
-# Configuration
-NEW_REPO_NAME="defi-arbitrage-core-mvp-v1"
-NEW_REPO_PATH="${HOME}/Documents/Google-antigravity/${NEW_REPO_NAME}"
-GITHUB_USERNAME="ali-baneshi"
+# Configuration (can be overridden by environment variables)
+NEW_REPO_NAME="${NEW_REPO_NAME:-defi-arbitrage-core-mvp-v1}"
+NEW_REPO_PATH="${NEW_REPO_PATH:-${HOME}/Documents/Google-antigravity/${NEW_REPO_NAME}}"
+GITHUB_USERNAME="${GITHUB_USERNAME:-ali-baneshi}"
 
 echo "=========================================="
 echo "Creating New Repository Copy"

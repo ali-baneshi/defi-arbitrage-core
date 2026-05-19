@@ -22,14 +22,30 @@ jobs:
           workspaces: rust/arbcore-rs
 
       - run: python -m pip install --upgrade pip
-      - run: pip install -e .[dev]
+      - run: pip install -e '.[dev]' --no-build-isolation
       - run: ruff check .
       - run: pytest
       - run: PYTHONPATH=src python scripts/validate_repository.py
       - run: PYTHONPATH=src python scripts/validate_documented_commands.py
+      - run: PYTHONPATH=src python scripts/validate_golden_fixtures.py
       - run: PYTHONPATH=src python scripts/validate_all.py --include-rust
       - run: PYTHONPATH=src python scripts/release_readiness.py --json
       - run: cargo test --manifest-path rust/arbcore-rs/Cargo.toml
+
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --upgrade pip
+      - run: pip install -e '.[dev]' --no-build-isolation
+      - run: pip install pip-audit
+      - run: pip-audit --strict
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   docker-smoke:
     runs-on: ubuntu-latest

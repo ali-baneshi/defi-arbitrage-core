@@ -39,6 +39,8 @@ ALLOWED_PREFIXES = (
     "python -m venv .venv",
     "source .venv/bin/activate",
     "pip install -e .[dev]",
+    "pip install -e '.[dev]'",
+    "make bootstrap",
     "defi-arbitrage-core ",
     "arbcore ",
 )

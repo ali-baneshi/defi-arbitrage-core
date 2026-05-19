@@ -14,7 +14,19 @@
 ```bash
 python -m venv .venv
 source .venv/bin/activate
-pip install -e .[dev]
+pip install -e '.[dev]' --no-build-isolation
+```
+
+如果公共 Python 索引不可达，请使用可访问的镜像：
+
+```bash
+make bootstrap PIP_INDEX_URL=https://<mirror>/simple
+```
+
+如需额外回退源：
+
+```bash
+make bootstrap PIP_INDEX_URL=https://<primary-mirror>/simple PIP_EXTRA_INDEX_URL=https://<secondary-mirror>/simple
 ```
 
 ## 验证

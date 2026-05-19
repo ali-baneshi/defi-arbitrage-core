@@ -98,10 +98,22 @@ Editable install when dev tools are available:
 ```bash
 python -m venv .venv
 source .venv/bin/activate
-pip install -e .[dev]
+pip install -e '.[dev]' --no-build-isolation
 defi-arbitrage-core examples/market_snapshot.json --json
 pytest
 ruff check .
+```
+
+If your environment cannot reach public Python registries, install using a reachable mirror:
+
+```bash
+make bootstrap PIP_INDEX_URL=https://<your-mirror>/simple
+```
+
+Or with an additional fallback index:
+
+```bash
+make bootstrap PIP_INDEX_URL=https://<primary-mirror>/simple PIP_EXTRA_INDEX_URL=https://<secondary-mirror>/simple
 ```
 
 Optional Rust validation:
@@ -153,6 +165,26 @@ PYTHONPATH=src python scripts/validate_all.py --include-rust
 PYTHONPATH=src python scripts/release_readiness.py --json
 ```
 
+## Troubleshooting Build And Test Failures
+
+- `zsh: no matches found: .[dev]`: quote extras exactly as `'.[dev]'`.
+- `externally-managed-environment`: create a virtualenv (`python -m venv .venv`) and install there.
+- `Installing build dependencies` hangs: use `--no-build-isolation` and configure a mirror index.
+- `ModuleNotFoundError: arbcore`: run with `PYTHONPATH=src` when not installed.
+- `pytest: No module named pytest`: run `make bootstrap` first or install dev extras in `.venv`.
+
+## Open-Source Readiness And Hardening
+
+Before public release, treat this checklist as required:
+
+- Reproducibility: pin and audit dependency versions in CI and container builds.
+- Security: enforce secret scanning, dependency scanning, and signed release artifacts.
+- Stability: require schema compatibility checks and deterministic output regression tests.
+- Operability: publish explicit support matrix (Python/Rust versions, platforms, optional features).
+- Governance: keep `SECURITY.md`, `CONTRIBUTING.md`, and release process aligned with actual workflow.
+
+Detailed execution plan: `docs/en/OPEN_SOURCE_RELEASE_PLAN.md`.
+
 ## Validation As A First-Class Feature
 
 - JSON schemas document the public contracts
@@ -180,6 +212,13 @@ This project is a good fit for:
 - protocol, analytics, and infrastructure companies that need a reusable analysis kernel
 
 It is a poor fit for anyone looking for a wallet-integrated bot, live execution engine, or turnkey production trading stack.
+
+## Choose Your Path
+
+- Researchers: start with `examples/` and `PYTHONPATH=src python -m defi_arbitrage_core.cli examples/market_snapshot.json --json`.
+- Integrators: use JSON output plus schemas in `schemas/` and run `PYTHONPATH=src python scripts/validate_output_contracts.py`.
+- Maintainers: run `PYTHONPATH=src python scripts/validate_all.py --include-rust` and review `docs/en/OPEN_SOURCE_RELEASE_PLAN.md`.
+- Security reviewers: start with `SECURITY.md`, then run `PYTHONPATH=src python scripts/release_readiness.py --json`.
 
 ## Practical Use Cases
 

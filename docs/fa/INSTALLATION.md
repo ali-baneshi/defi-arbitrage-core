@@ -14,7 +14,19 @@
 ```bash
 python -m venv .venv
 source .venv/bin/activate
-pip install -e .[dev]
+pip install -e '.[dev]' --no-build-isolation
+```
+
+اگر دسترسی به indexهای عمومی سخت است، از mirror داخلی استفاده کنید:
+
+```bash
+make bootstrap PIP_INDEX_URL=https://<mirror>/simple
+```
+
+در صورت نیاز به fallback:
+
+```bash
+make bootstrap PIP_INDEX_URL=https://<primary-mirror>/simple PIP_EXTRA_INDEX_URL=https://<secondary-mirror>/simple
 ```
 
 ## بررسی

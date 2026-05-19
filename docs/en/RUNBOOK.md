@@ -78,6 +78,14 @@ PYTHONPATH=src python scripts/validate_all.py --include-rust
 7. Review `README.md`, `SECURITY.md`, `RELEASE.md`, and contract docs for accurate maturity claims.
 8. Tag only as an alpha/offline MVP until independent security and operational reviews are complete.
 
+## Release-Day Quick Path
+
+1. Run `PYTHONPATH=src python scripts/validate_all.py --include-rust` (or omit Rust where unavailable).
+2. Run `PYTHONPATH=src python scripts/validate_golden_fixtures.py` to detect output contract drift.
+3. Run `PYTHONPATH=src python scripts/release_readiness.py --json` and archive the output.
+4. Confirm `docs/en/OPEN_SOURCE_RELEASE_PLAN.md` and `docs/en/OPEN_SOURCE_TASKS.md` reflect current status.
+5. If any gate fails, do not tag a release; open/attach a release-hardening issue and rerun after fixes.
+
 ## Pre-Merge Operator Checklist
 
 1. Run `PYTHONPATH=src python scripts/validate_all.py --include-rust` when Cargo is available.

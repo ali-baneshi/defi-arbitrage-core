@@ -24,6 +24,8 @@ REQUIRED_DOCS = (
     "docs/en/PROJECT_BOUNDARIES.md",
     "docs/en/RELEASE_EVIDENCE.md",
     "docs/en/SUPPORT_MATRIX.md",
+    "docs/en/OPEN_SOURCE_RELEASE_PLAN.md",
+    "docs/en/OPEN_SOURCE_TASKS.md",
 )
 REQUIRED_SCHEMAS = (
     "schemas/diagnostics.schema.json",
@@ -255,6 +257,7 @@ def check_ci_coverage() -> list[str]:
     required = (
         "ruff check .",
         "pytest",
+        "PYTHONPATH=src python scripts/validate_golden_fixtures.py",
         "PYTHONPATH=src python scripts/validate_all.py --include-rust",
         "PYTHONPATH=src python scripts/release_readiness.py --json",
         "cargo test --manifest-path rust/arbcore-rs/Cargo.toml",
