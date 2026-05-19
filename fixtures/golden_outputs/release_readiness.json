@@ -1,178 +1,208 @@
 {
-    "local_validation_ready": true,
-    "reviewer_ready": true,
-    "open_source_ready": false,
-    "public_release_ready": false,
-    "production_ready": false,
-    "maturity": "alpha-offline-mvp",
-    "checks": [
-        {
-            "command": "/usr/bin/python scripts/validate_repository.py",
+  "local_validation_ready": true,
+  "reviewer_ready": true,
+  "open_source_ready": false,
+  "public_release_ready": false,
+  "production_ready": false,
+  "maturity": "alpha-offline-mvp",
+  "checks": [
+    {
+      "command": "/home/manjaruhp/.pyenv/versions/3.12.8/bin/python scripts/validate_repository.py",
+      "returncode": 0,
+      "stdout_json": null,
+      "stdout_tail": [
+        "repository metadata validation passed"
+      ],
+      "stderr_tail": []
+    },
+    {
+      "command": "/home/manjaruhp/.pyenv/versions/3.12.8/bin/python scripts/validate_contracts.py --json",
+      "returncode": 0,
+      "stdout_json": {
+        "manifest_path": "contracts/contract-manifest.json",
+        "artifacts_checked": 2,
+        "languages": [
+          "solidity",
+          "vyper"
+        ],
+        "manifest_sha256": "397efa951c76ccd23082e1f08c3973fbcd354deeb4da8cad7e95698eb0bc1838",
+        "ok": true,
+        "findings": []
+      },
+      "stdout_tail": [
+        "  ],",
+        "  \"manifest_sha256\": \"397efa951c76ccd23082e1f08c3973fbcd354deeb4da8cad7e95698eb0bc1838\",",
+        "  \"ok\": true,",
+        "  \"findings\": []",
+        "}"
+      ],
+      "stderr_tail": []
+    },
+    {
+      "command": "/home/manjaruhp/.pyenv/versions/3.12.8/bin/python scripts/validate_negative_cases.py",
+      "returncode": 0,
+      "stdout_json": null,
+      "stdout_tail": [
+        "negative validation checks passed"
+      ],
+      "stderr_tail": []
+    },
+    {
+      "command": "/home/manjaruhp/.pyenv/versions/3.12.8/bin/python scripts/validate_schema_consistency.py",
+      "returncode": 0,
+      "stdout_json": null,
+      "stdout_tail": [
+        "schema consistency validation passed"
+      ],
+      "stderr_tail": []
+    },
+    {
+      "command": "/home/manjaruhp/.pyenv/versions/3.12.8/bin/python scripts/demo_workflow.py",
+      "returncode": 0,
+      "stdout_json": {
+        "ok": true,
+        "steps": [
+          {
+            "command": "/home/manjaruhp/.pyenv/versions/3.12.8/bin/python -m defi_arbitrage_core.cli examples/market_snapshot.json --json",
             "returncode": 0,
-            "stdout_json": null,
-            "stdout_tail": [
-                "repository metadata validation passed"
-            ],
-            "stderr_tail": []
-        },
-        {
-            "command": "/usr/bin/python scripts/validate_contracts.py --json",
-            "returncode": 0,
-            "stdout_json": {
-                "manifest_path": "contracts/contract-manifest.json",
-                "artifacts_checked": 2,
-                "languages": [
-                    "solidity",
-                    "vyper"
+            "stdout_json": [
+              {
+                "network": "polygon",
+                "path": [
+                  "USDC",
+                  "WETH",
+                  "DAI",
+                  "USDC"
                 ],
-                "manifest_sha256": "xxxxxxxxxxxxxxxxxx",
-                "ok": true,
-                "findings": []
-            },
-            "stdout_tail": [
-                "  ],",
-                "  \"manifest_sha256\": \"xxxxxxxxxxxxxxxxxx\",",
-                "  \"ok\": true,",
-                "  \"findings\": []",
-                "}"
+                "venues": [
+                  "dex-a",
+                  "dex-b",
+                  "dex-c"
+                ],
+                "gross_return": 1.0079427572346378,
+                "profit_bps": 79.42757234637776,
+                "limiting_liquidity": 100000.0,
+                "estimated_capacity": 10000.0
+              }
             ],
-            "stderr_tail": []
-        },
-        {
-            "command": "/usr/bin/python scripts/validate_negative_cases.py",
+            "stderr": ""
+          },
+          {
+            "command": "/home/manjaruhp/.pyenv/versions/3.12.8/bin/python -m defi_arbitrage_core.cli examples/no_opportunity_snapshot.json --json",
             "returncode": 0,
-            "stdout_json": null,
-            "stdout_tail": [
-                "negative validation checks passed"
-            ],
-            "stderr_tail": []
-        },
-        {
-            "command": "/usr/bin/python scripts/validate_schema_consistency.py",
-            "returncode": 0,
-            "stdout_json": null,
-            "stdout_tail": [
-                "schema consistency validation passed"
-            ],
-            "stderr_tail": []
-        },
-        {
-            "command": "/usr/bin/python scripts/demo_workflow.py",
+            "stdout_json": [],
+            "stderr": ""
+          },
+          {
+            "command": "/home/manjaruhp/.pyenv/versions/3.12.8/bin/python scripts/validate_contracts.py --json",
             "returncode": 0,
             "stdout_json": {
-                "ok": true,
-                "steps": [
-                    {
-                        "command": "/usr/bin/python -m arbcore.cli examples/market_snapshot.json --json",
-                        "returncode": 0,
-                        "stdout_json": [
-                            {
-                                "path": [
-                                    "USDC",
-                                    "WETH",
-                                    "DAI",
-                                    "USDC"
-                                ],
-                                "venues": [
-                                    "dex-a",
-                                    "dex-b",
-                                    "dex-c"
-                                ],
-                                "gross_return": 1.0079427572346378,
-                                "profit_bps": 79.42757234637776,
-                                "limiting_liquidity": 100000.0,
-                                "estimated_capacity": 10000.0
-                            }
-                        ],
-                        "stderr": ""
-                    },
-                    {
-                        "command": "/usr/bin/python -m arbcore.cli examples/no_opportunity_snapshot.json --json",
-                        "returncode": 0,
-                        "stdout_json": [],
-                        "stderr": ""
-                    },
-                    {
-                        "command": "/usr/bin/python scripts/validate_contracts.py --json",
-                        "returncode": 0,
-                        "stdout_json": {
-                            "manifest_path": "contracts/contract-manifest.json",
-                            "artifacts_checked": 2,
-                            "languages": [
-                                "solidity",
-                                "vyper"
-                            ],
-                            "manifest_sha256": "xxxxxxxxxxxxxxxxxx",
-                            "ok": true,
-                            "findings": []
-                        },
-                        "stderr": ""
-                    },
-                    {
-                        "command": "/usr/bin/python -m arbcore.cli --diagnostics",
-                        "returncode": 0,
-                        "stdout_json": {
-                            "arbcore_version": "0.1.0",
-                            "python": {
-                                "version": "3.13.11",
-                                "executable": "/usr/bin/python"
-                            },
-                            "platform": {
-                                "system": "Linux",
-                                "release": "6.12"
-                            },
-                            "repository": {
-                                "cwd": "/root/defi-arbitrage-bot",
-                                "default_snapshot_exists": true,
-                                "contract_manifest_exists": true
-                            },
-                            "capabilities": {
-                                "offline_snapshot_analysis": true,
-                                "structured_cli_errors": true,
-                                "contract_template_validation": true,
-                                "smart_contract_languages": [
-                                    "solidity",
-                                    "vyper"
-                                ],
-                                "live_trading": false,
-                                "contract_deployment": false,
-                                "public_release_ready_claimed": false
-                            },
-                            "optional_tools": {
-                                "cargo": true,
-                                "pytest": false,
-                                "ruff": false
-                            },
-                            "resolved_policy": {
-                                "min_profit_bps": 5.0,
-                                "max_hops": 4,
-                                "min_liquidity": 0.0,
-                                "max_notional": 10000.0,
-                                "max_results": 25
-                            },
-                            "validation_commands": [
-                                "PYTHONPATH=src python scripts/validate_all.py --include-rust",
-                                "PYTHONPATH=src python scripts/validate_negative_cases.py",
-                                "PYTHONPATH=src python scripts/release_readiness.py --json"
-                            ],
-                            "limits": {
-                                "max_hops": 8,
-                                "max_results": 1000,
-                                "max_snapshot_edges": 10000
-                            }
-                        },
-                        "stderr": ""
-                    }
-                ]
+              "manifest_path": "contracts/contract-manifest.json",
+              "artifacts_checked": 2,
+              "languages": [
+                "solidity",
+                "vyper"
+              ],
+              "manifest_sha256": "397efa951c76ccd23082e1f08c3973fbcd354deeb4da8cad7e95698eb0bc1838",
+              "ok": true,
+              "findings": []
             },
-            "stdout_tail": [
-                "      },",
-                "      \"stderr\": \"\"",
-                "    }",
-                "  ]",
-                "}"
-            ],
-            "stderr_tail": []
-        }
-    ],
-
+            "stderr": ""
+          },
+          {
+            "command": "/home/manjaruhp/.pyenv/versions/3.12.8/bin/python -m defi_arbitrage_core.cli --diagnostics",
+            "returncode": 0,
+            "stdout_json": {
+              "arbcore_version": "0.1.0",
+              "python": {
+                "version": "3.12.8",
+                "executable": "/home/manjaruhp/.pyenv/versions/3.12.8/bin/python"
+              },
+              "platform": {
+                "system": "Linux",
+                "release": "6.12.64-1-MANJARO"
+              },
+              "repository": {
+                "cwd": "/home/manjaruhp/Documents/Google-antigravity/defi-arbitrage-core-public-mvp",
+                "default_snapshot_exists": true,
+                "default_network": "polygon",
+                "contract_manifest_exists": true
+              },
+              "capabilities": {
+                "offline_snapshot_analysis": true,
+                "structured_cli_errors": true,
+                "contract_template_validation": true,
+                "smart_contract_languages": [
+                  "solidity",
+                  "vyper"
+                ],
+                "multi_network_snapshots": true,
+                "live_trading": false,
+                "contract_deployment": false,
+                "public_release_ready_claimed": false
+              },
+              "optional_tools": {
+                "cargo": true,
+                "pytest": false,
+                "ruff": false
+              },
+              "resolved_policy": {
+                "min_profit_bps": 5.0,
+                "max_hops": 4,
+                "min_liquidity": 0.0,
+                "max_notional": 10000.0,
+                "max_results": 25
+              },
+              "validation_commands": [
+                "PYTHONPATH=src python scripts/validate_all.py --include-rust",
+                "PYTHONPATH=src python scripts/validate_negative_cases.py",
+                "PYTHONPATH=src python scripts/release_readiness.py --json"
+              ],
+              "limits": {
+                "max_hops": 8,
+                "max_results": 1000,
+                "max_snapshot_edges": 10000
+              }
+            },
+            "stderr": ""
+          }
+        ]
+      },
+      "stdout_tail": [
+        "      },",
+        "      \"stderr\": \"\"",
+        "    }",
+        "  ]",
+        "}"
+      ],
+      "stderr_tail": []
+    }
+  ],
+  "manual_release_gates": [
+    {
+      "id": "historical_credentials_rotated",
+      "status": "blocked-manual",
+      "reason": "Credentials from previous local history must be rotated outside this repo.",
+      "evidence_required": "Maintainer attestation naming rotated credential classes and rotation date."
+    },
+    {
+      "id": "old_git_backups_excluded",
+      "status": "blocked-manual",
+      "reason": "Maintainer must confirm old .git backups are outside publication paths.",
+      "evidence_required": "Maintainer attestation that publication artifact excludes old repositories/backups."
+    },
+    {
+      "id": "independent_history_scan",
+      "status": "blocked-manual",
+      "reason": "Run an independent full-history scanner before public release.",
+      "evidence_required": "Tool name, scan date, scope, and pass/fail result from outside this baseline."
+    },
+    {
+      "id": "localized_docs_refreshed_or_scoped",
+      "status": "blocked-manual",
+      "reason": "English remains canonical for release decisions; localized docs must stay refreshed or be explicitly scoped in release notes.",
+      "evidence_required": "Release notes confirm docs/en is canonical and localized docs are refreshed or intentionally scoped."
+    }
+  ],
+  "summary": "Local deterministic validation passed, but public release remains blocked until manual security/history/documentation gates are completed."
+}

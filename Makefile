@@ -7,7 +7,7 @@ PIP_FLAGS ?= --no-build-isolation
 
 bootstrap:
 	$(PYTHON) -m venv .venv
-	.venv/bin/python -m pip install -U pip
+	.venv/bin/python -m pip install -U pip setuptools wheel
 	.venv/bin/python -m pip install -e '.[dev]' $(PIP_FLAGS) $(if $(PIP_INDEX_URL),--index-url $(PIP_INDEX_URL),) $(if $(PIP_EXTRA_INDEX_URL),--extra-index-url $(PIP_EXTRA_INDEX_URL),)
 
 validate:
