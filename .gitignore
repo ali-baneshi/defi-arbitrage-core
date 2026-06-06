@@ -52,3 +52,4 @@ artifacts/
 *.pt
 *.pkl
 rust/arbcore-rs/target/
+.kilo/
