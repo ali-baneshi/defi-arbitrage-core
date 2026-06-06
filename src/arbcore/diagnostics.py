@@ -28,7 +28,7 @@ def collect_diagnostics() -> dict[str, Any]:
             "release": platform.release(),
         },
         "repository": {
-            "cwd": str(Path.cwd()),
+            "cwd": ".",
             "default_snapshot_exists": Path(settings.provider_file).is_file(),
             "default_network": settings.default_network,
             "contract_manifest_exists": Path("contracts/contract-manifest.json").is_file(),
