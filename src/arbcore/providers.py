@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Protocol
 
 from arbcore.errors import SnapshotError
-from arbcore.models import Edge, MarketSnapshot, MAX_SNAPSHOT_BYTES
+from arbcore.models import MAX_SNAPSHOT_BYTES, Edge, MarketSnapshot
 from arbcore.path_utils import _resolve_safe_path
 from arbcore.validation import validate_snapshot_payload
 
@@ -22,10 +22,13 @@ class JsonFileProvider:
     """Loads a snapshot from a local JSON file without network access."""
 
     def __init__(self, path: str | Path):
-        # Restrict path to be within the current working directory or system temp directory for security
+        # Restrict path to be within the current working directory or
+        # system temp directory for security
         # In the future, this could be made configurable via an environment variable
         import tempfile
-        self.path = _resolve_safe_path(path, allowed_roots=[Path.cwd(), Path(tempfile.gettempdir())])
+        self.path = _resolve_safe_path(
+            path, allowed_roots=[Path.cwd(), Path(tempfile.gettempdir())]
+        )
 
     def load_snapshot(self) -> MarketSnapshot:
         if not self.path.exists():
@@ -34,7 +37,10 @@ class JsonFileProvider:
             raise SnapshotError(f"snapshot path is not a file: {self.path}")
         # Check file size before reading to prevent memory exhaustion
         if self.path.stat().st_size > MAX_SNAPSHOT_BYTES:
-            raise SnapshotError(f"snapshot file too large: {self.path.stat().st_size} bytes (maximum {MAX_SNAPSHOT_BYTES} bytes)")
+            raise SnapshotError(
+                f"snapshot file too large: {self.path.stat().st_size} bytes "
+                f"(maximum {MAX_SNAPSHOT_BYTES} bytes)"
+            )
         try:
             payload = json.loads(self.path.read_text(encoding="utf-8"))
         except UnicodeDecodeError as exc:

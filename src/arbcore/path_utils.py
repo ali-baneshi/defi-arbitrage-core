@@ -2,17 +2,15 @@
 
 from __future__ import annotations
 
-import os
 import tempfile
 from pathlib import Path
-from typing import Union
 
 from arbcore.errors import SnapshotError
 
 
 def _resolve_safe_path(
-    path: Union[str, Path],
-    allowed_roots: list[Union[str, Path]] | None = None,
+    path: str | Path,
+    allowed_roots: list[str | Path] | None = None,
     *,
     allow_symlinks: bool = False,
     base_name_only: bool = False,
@@ -31,7 +29,8 @@ def _resolve_safe_path(
         The resolved absolute Path that is guaranteed to be within one of the allowed roots
 
     Raises:
-        SnapshotError: If the path is not safe (outside all allowed roots, is a symlink when not allowed, etc.)
+        SnapshotError: If the path is not safe (outside all allowed roots,
+        is a symlink when not allowed, etc.)
     """
     if allowed_roots is None:
         # Default to current working directory and system temp directory
@@ -89,5 +88,6 @@ def _resolve_safe_path(
     # If we got here, the path is not within any allowed root
     allowed_roots_str = ", ".join(str(root) for root in allowed_root_paths)
     raise SnapshotError(
-        f"path {path} resolves to {resolved_path} which is outside allowed directories: {allowed_roots_str}"
+        f"path {path} resolves to {resolved_path} which is outside allowed "
+        f"directories: {allowed_roots_str}"
     )

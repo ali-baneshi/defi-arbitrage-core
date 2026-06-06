@@ -4,15 +4,12 @@ import json
 import math
 import shutil
 import subprocess
-import sys
-import warnings
 from dataclasses import fields
 from pathlib import Path
 
 from arbcore.engine import AnalysisEngine
 from arbcore.errors import ArbCoreError, SnapshotError
 from arbcore.models import MarketSnapshot, Opportunity, RiskPolicy
-from arbcore.path_utils import _resolve_safe_path
 from arbcore.providers import JsonFileProvider
 from arbcore.validation import snapshot_to_dict
 
@@ -60,12 +57,18 @@ class RustAnalysisService:
                     return str(path)
                 except ValueError:
                     # Path exists but is not within rust/ directory
-                    raise SnapshotError(f"Rust binary must be within {repo_rust_dir} or be an allowed basename in PATH")
-            # If the path does not exist, we cannot check if it would be within rust/ directory,
-            # but we allow any non-existent path (the caller will check existence via available())
-            # However, we still want to prevent absolute paths that are clearly outside allowed areas?
-            # For simplicity, we allow any non-existent path; the safety check for existence
-            # will happen in `available()` and `analyze_file` via PATH lookup and exists().
+                    raise SnapshotError(
+                        f"Rust binary must be within {repo_rust_dir} or be an "
+                        f"allowed basename in PATH"
+                    ) from None
+            # If the path does not exist, we cannot check if it would be within
+            # rust/ directory, but we allow any non-existent path (the caller
+            # will check existence via available())
+            # However, we still want to prevent absolute paths that are clearly
+            # outside allowed areas?
+            # For simplicity, we allow any non-existent path; the safety check
+            # for existence will happen in `available()` and `analyze_file`
+            # via PATH lookup and exists().
             return str(binary)
         except (OSError, RuntimeError):
             # Path resolution failed, fall back to returning the original binary string

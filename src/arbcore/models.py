@@ -148,7 +148,8 @@ class MarketSnapshot:
         )
         if total_metadata_bytes > MAX_TOTAL_METADATA_BYTES:
             raise SnapshotError(
-                f"total metadata size too large: {total_metadata_bytes} bytes (maximum {MAX_TOTAL_METADATA_BYTES} bytes)"
+                f"total metadata size too large: {total_metadata_bytes} bytes "
+                f"(maximum {MAX_TOTAL_METADATA_BYTES} bytes)"
             )
         for edge in self.edges:
             edge.validate()

@@ -1,10 +1,10 @@
 from __future__ import annotations
 
+import math
 from collections import defaultdict
 from collections.abc import Iterable
-import math
 
-from arbcore.models import Edge, MarketSnapshot, Opportunity, RiskPolicy, MAX_EDGE_DEGREE
+from arbcore.models import MAX_EDGE_DEGREE, Edge, MarketSnapshot, Opportunity, RiskPolicy
 
 
 class AnalysisEngine:
@@ -25,7 +25,8 @@ class AnalysisEngine:
         for node_edges in graph.values():
             if len(node_edges) > MAX_EDGE_DEGREE:
                 raise ValueError(
-                    f"Refusing to analyze snapshot with a node having more than {MAX_EDGE_DEGREE} outgoing edges"
+                    f"Refusing to analyze snapshot with a node having more than "
+                    f"{MAX_EDGE_DEGREE} outgoing edges"
                 )
 
         opportunities: dict[tuple[str, ...], Opportunity] = {}

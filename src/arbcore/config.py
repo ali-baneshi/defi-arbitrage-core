@@ -38,7 +38,8 @@ class Settings:
 
     @classmethod
     def from_env(cls) -> Settings:
-        # Resolve provider file path safely, restricting to current working directory and temp directory
+        # Resolve provider file path safely, restricting to current working
+        # directory and temp directory
         provider_file_path = _resolve_safe_path(
             os.getenv("ARBCORE_PROVIDER_FILE", "examples/market_snapshot.json"),
             allowed_roots=[Path.cwd(), Path(tempfile.gettempdir())]
