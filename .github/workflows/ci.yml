@@ -45,6 +45,8 @@ jobs:
       - run: python -m pip install --upgrade pip pip-audit
       - run: pip-audit --strict .
       - uses: gitleaks/gitleaks-action@v2
+        with:
+          version: "v8.18.0"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

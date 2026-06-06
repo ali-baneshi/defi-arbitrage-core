@@ -9,7 +9,7 @@
         "release": "6.12"
     },
     "repository": {
-        "cwd": "/root/defi-arbitrage-bot",
+        "cwd": ".",
         "default_snapshot_exists": true,
         "contract_manifest_exists": true
     },

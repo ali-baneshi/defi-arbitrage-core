@@ -1,3 +1,5 @@
+> **⚠ ALPHA — NOT YET PUBLICLY RELEASED.** This repository is undergoing security hardening. Do not use in production. See [SECURITY.md](SECURITY.md) for release gates. Run `PYTHONPATH=src python scripts/release_readiness.py` to check current status.
+
 # defi-arbitrage-core
 
 [![CI](https://github.com/ali-baneshi/defi-arbitrage-core-public-mvp/actions/workflows/ci.yml/badge.svg)](https://github.com/ali-baneshi/defi-arbitrage-core-public-mvp/actions)

@@ -121,6 +121,18 @@ def _validate_diagnostics_output(errors: list[str]) -> None:
             f"diagnostics: max_snapshot_edges must be 10000, got {limits.get('max_snapshot_edges')}"
         )
 
+    actual_cwd = actual.get("repository", {}).get("cwd")
+    if actual_cwd is not None:
+        from pathlib import Path
+        try:
+            if Path(actual_cwd).is_absolute():
+                errors.append(
+                    "diagnostics: repository.cwd must be a relative path, "
+                    f"got absolute path {actual_cwd}"
+                )
+        except (TypeError, OSError):
+            errors.append("diagnostics: repository.cwd must be a string path")
+
 
 def _validate_cli_error_output(errors: list[str]) -> None:
     """Validate CLI structured error output."""

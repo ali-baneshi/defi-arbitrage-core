@@ -4,12 +4,15 @@ import json
 import math
 import shutil
 import subprocess
+import sys
+import warnings
 from dataclasses import fields
 from pathlib import Path
 
 from arbcore.engine import AnalysisEngine
-from arbcore.errors import ArbCoreError
+from arbcore.errors import ArbCoreError, SnapshotError
 from arbcore.models import MarketSnapshot, Opportunity, RiskPolicy
+from arbcore.path_utils import _resolve_safe_path
 from arbcore.providers import JsonFileProvider
 from arbcore.validation import snapshot_to_dict
 
@@ -27,8 +30,46 @@ class RustAnalysisService:
     """
 
     def __init__(self, binary: str | Path = "defi-arbitrage-core-rs", timeout_seconds: float = 5.0):
-        self.binary = str(binary)
+        try:
+            self.binary = self._resolve_binary(binary)
+        except SnapshotError as exc:
+            # Convert path safety errors to RustServiceUnavailable for consistency
+            raise RustServiceUnavailable(str(exc)) from exc
         self.timeout_seconds = timeout_seconds
+
+    @staticmethod
+    def _resolve_binary(binary: str | Path) -> str:
+        """
+        Resolve the Rust binary path safely, restricting to the repository's rust/ directory
+        or allowing only the basename 'defi-arbitrage-core-rs*' to be resolved from PATH.
+        If the binary does not exist, return the given binary string (caller must check existence).
+        """
+        # First, try to resolve as an absolute or relative path
+        try:
+            path = Path(binary)
+            # Expand user and resolve to absolute path if it exists
+            if path.exists():
+                path = path.expanduser().resolve()
+                # If the path exists, check if it's within the allowed rust/ directory
+                repo_rust_dir = Path(__file__).resolve().parents[2] / "rust"
+                try:
+                    path.relative_to(repo_rust_dir)
+                    # Path is within allowed rust/ directory, check if it's a symlink
+                    if Path(binary).is_symlink():
+                        raise SnapshotError("symlinks are not allowed for rust binary path")
+                    return str(path)
+                except ValueError:
+                    # Path exists but is not within rust/ directory
+                    raise SnapshotError(f"Rust binary must be within {repo_rust_dir} or be an allowed basename in PATH")
+            # If the path does not exist, we cannot check if it would be within rust/ directory,
+            # but we allow any non-existent path (the caller will check existence via available())
+            # However, we still want to prevent absolute paths that are clearly outside allowed areas?
+            # For simplicity, we allow any non-existent path; the safety check for existence
+            # will happen in `available()` and `analyze_file` via PATH lookup and exists().
+            return str(binary)
+        except (OSError, RuntimeError):
+            # Path resolution failed, fall back to returning the original binary string
+            return str(binary)
 
     def available(self) -> bool:
         if Path(self.binary).exists():
@@ -62,7 +103,9 @@ class RustAnalysisService:
                 check=False,
                 capture_output=True,
                 text=True,
+                stdin=subprocess.DEVNULL,
                 timeout=self.timeout_seconds,
+                preexec_fn=self._pre_exec_resource_limit,
             )
         except (OSError, subprocess.TimeoutExpired) as exc:
             raise RustServiceUnavailable("Rust analyzer execution failed") from exc
@@ -76,6 +119,17 @@ class RustAnalysisService:
         if not isinstance(payload, list):
             raise RustServiceUnavailable("Rust analyzer returned an invalid top-level payload")
         return [_opportunity_from_dict(item) for item in payload]
+
+    @staticmethod
+    def _pre_exec_resource_limit() -> None:
+        try:
+            import resource
+
+            soft, hard = resource.getrlimit(resource.RLIMIT_AS)
+            limit = 512 * 1024 * 1024
+            resource.setrlimit(resource.RLIMIT_AS, (min(soft, limit), min(hard, limit)))
+        except (ImportError, ValueError, OSError):
+            pass
 
 
 def analyze_with_optional_rust(
@@ -91,7 +145,13 @@ def analyze_with_optional_rust(
     """
 
     policy = policy or RiskPolicy()
-    service = RustAnalysisService(rust_binary)
+    try:
+        service = RustAnalysisService(rust_binary)
+    except RustServiceUnavailable:
+        # Fall back to Python if service creation fails
+        snapshot = JsonFileProvider(snapshot_path).load_snapshot()
+        return AnalysisEngine(policy).analyze(snapshot), "python"
+    
     try:
         return service.analyze_file(snapshot_path, policy), "rust"
     except RustServiceUnavailable:

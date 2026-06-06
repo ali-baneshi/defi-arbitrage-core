@@ -2,8 +2,9 @@ from __future__ import annotations
 
 from collections import defaultdict
 from collections.abc import Iterable
+import math
 
-from arbcore.models import Edge, MarketSnapshot, Opportunity, RiskPolicy
+from arbcore.models import Edge, MarketSnapshot, Opportunity, RiskPolicy, MAX_EDGE_DEGREE
 
 
 class AnalysisEngine:
@@ -21,6 +22,11 @@ class AnalysisEngine:
             if edge.liquidity is not None and edge.liquidity < self.policy.min_liquidity:
                 continue
             graph[edge.source].append(edge)
+        for node_edges in graph.values():
+            if len(node_edges) > MAX_EDGE_DEGREE:
+                raise ValueError(
+                    f"Refusing to analyze snapshot with a node having more than {MAX_EDGE_DEGREE} outgoing edges"
+                )
 
         opportunities: dict[tuple[str, ...], Opportunity] = {}
         for start in sorted(graph):
@@ -43,9 +49,13 @@ class AnalysisEngine:
 
         for edge in graph.get(current, []):
             next_return = gross_return * edge.effective_rate()
+            if not math.isfinite(next_return):
+                continue
             next_route = [*route, edge]
             if edge.target == start and len(next_route) >= 2:
                 opportunity = self._to_opportunity(network, start, next_route, next_return)
+                if not math.isfinite(opportunity.gross_return):
+                    continue
                 if self._passes_policy(opportunity):
                     key = self._canonical_key(opportunity.path)
                     existing = opportunities.get(key)

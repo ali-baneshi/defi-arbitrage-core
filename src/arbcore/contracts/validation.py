@@ -3,10 +3,12 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+import tempfile
 from pathlib import Path
 
 from arbcore.contracts.models import ContractArtifact, ContractFinding, ContractValidationReport
 from arbcore.contracts.registry import load_contract_manifest
+from arbcore.path_utils import _resolve_safe_path
 
 ADDRESS_RE = re.compile(r"0x[a-fA-F0-9]{40}")
 PRIVATE_KEY_RE = re.compile(r"0x[a-fA-F0-9]{64}")
@@ -28,6 +30,8 @@ REQUIRED_ARTIFACT_TAGS = {"template", "non-deployable-without-audit"}
 def validate_contract_workspace(
     manifest_path: str | Path = "contracts/contract-manifest.json",
 ) -> ContractValidationReport:
+    # Resolve manifest path safely, restricting to current working directory and temp directory
+    manifest_path = _resolve_safe_path(manifest_path, allowed_roots=[Path.cwd(), Path(tempfile.gettempdir())])
     manifest = Path(manifest_path)
     workspace_root = (
         manifest.resolve().parent.parent if manifest.parent.name == "contracts" else Path.cwd()
