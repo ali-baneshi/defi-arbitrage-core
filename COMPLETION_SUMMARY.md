@@ -1,4 +1,9 @@
-# Project Completion Summary
+# Historical Project Completion Summary
+
+This document records earlier documentation and automation work. It is
+superseded for release decisions by `RELEASE.md`, `docs/en/RELEASE_EVIDENCE.md`,
+and `release/release-evidence.example.json`. The intended release identity is
+`0.1.0-alpha`; public release is not approved until the manual gates pass.
 
 ## ✅ Completed Tasks
 
@@ -115,13 +120,13 @@ bash CREATE_NEW_REPO.sh
 
 This will:
 1. Check prerequisites (git, rsync, gh CLI)
-2. Create new repository at `~/Documents/Google-antigravity/defi-arbitrage-core-mvp-v1`
+2. Create new repository at `~/Documents/Google-antigravity/defi-arbitrage-core`
 3. Copy all files with smart exclusions
 4. Initialize fresh git repository
 5. Create initial commit with comprehensive release notes
 6. Create GitHub repository (if gh CLI available)
 7. Configure repository topics
-8. Create v1.0.0 release tag
+8. Prepare the v0.1.0-alpha release tag
 9. Provide next steps
 
 ### Manual Steps (if needed)
@@ -129,17 +134,17 @@ This will:
 If GitHub CLI is not available, the script provides clear manual instructions:
 
 ```bash
-cd ~/Documents/Google-antigravity/defi-arbitrage-core-mvp-v1
-git remote add origin https://github.com/ali-baneshi/defi-arbitrage-core-mvp-v1.git
+cd ~/Documents/Google-antigravity/defi-arbitrage-core
+git remote add origin https://github.com/ali-baneshi/defi-arbitrage-core.git
 git branch -M main
 git push -u origin main
-git push origin v1.0.0
+git push origin v0.1.0-alpha
 ```
 
 ### Verify Everything
 
 ```bash
-cd ~/Documents/Google-antigravity/defi-arbitrage-core-mvp-v1
+cd ~/Documents/Google-antigravity/defi-arbitrage-core
 PYTHONPATH=src python scripts/validate_all.py
 ```
 

@@ -29,6 +29,10 @@ PYTHONPATH=src python scripts/validate_all.py
 
 The secret scan is lightweight active-tree scanning and does not replace independent history scanning such as gitleaks.
 
+`PYTHONPATH=src python scripts/audit_git_history.py` additionally scans reachable,
+reflog, and unreachable Git blobs. It is useful local evidence but does not
+replace an independent scanner operated outside this repository.
+
 ## Reporting Vulnerabilities
 
 Report suspected vulnerabilities privately to Ali Baneshi at baneshi712@gmail.com. Include affected files, reproduction steps, expected impact, and whether any secret exposure is involved.

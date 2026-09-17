@@ -35,6 +35,8 @@ PYTHONPATH=src python -m defi_arbitrage_core.cli examples/market_snapshot.json -
 
 这个仓库不做 cross-chain bridge 或 routing。推荐的方式是：每个网络生成自己的本地 snapshot，然后复用同一个分析核心。
 
+输出包含 `capacity_known`、`snapshot_source` 和 `snapshot_timestamp`。`estimated_capacity` 会根据每个 hop 之前的线性 rate，将 liquidity 边界换算为起始资产单位。`limiting_liquidity` 只是 diagnostics 用的原始值，可能混合不同资产单位。缺少 liquidity 时会设置 `capacity_known: false`。这是 nominal 分析，不会模拟 slippage、gas、token decimals、latency、MEV 或 venue 的可执行深度。
+
 ## Python API
 
 ```python

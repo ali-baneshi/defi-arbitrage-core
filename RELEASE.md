@@ -16,6 +16,8 @@ Avoid positioning it as a trading bot, execution engine, or deployable smart-con
 ```bash
 PYTHONPATH=src python scripts/validate_all.py
 PYTHONPATH=src python scripts/demo_workflow.py
+python -m pip install -r requirements-release.txt
+python scripts/build_release_artifacts.py
 ```
 
 - [ ] Run active-tree secret scan:
@@ -54,7 +56,7 @@ PYTHONPATH=src python scripts/validate_rust_service.py
 
 ## Recommended First Public Version
 
-Use `0.1.0` for the first public alpha MVP release after history cleanup, credential rotation, validation, and independent review.
+Use `0.1.0-alpha` for the first public alpha MVP release after history cleanup, credential rotation, localization review, validation, and independent review.
 
 ## No-Dependency Release Gate
 

@@ -55,6 +55,7 @@ Maintain a copy of:
 
 - `PYTHONPATH=src python scripts/validate_all.py --include-rust`
 - `PYTHONPATH=src python scripts/release_readiness.py --json`
+- `PYTHONPATH=src python scripts/validate_release_evidence.py --example`
 - independent history-scan results
 - maintainer attestations for credential rotation and old-history exclusion
 
@@ -67,3 +68,7 @@ Confirm the following in practice, not just in prose:
 - release evidence is captured and archived
 - the repository description and topics match the actual scope
 - no document implies live trading or production safety
+
+The canonical repository for this release is:
+
+`https://github.com/ali-baneshi/defi-arbitrage-core`

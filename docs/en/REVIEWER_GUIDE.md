@@ -41,6 +41,7 @@ Illustrative:
 PYTHONPATH=src python -m defi_arbitrage_core.cli --diagnostics
 PYTHONPATH=src python scripts/validate_all.py --include-rust
 PYTHONPATH=src python scripts/release_readiness.py --json
+PYTHONPATH=src python scripts/validate_release_evidence.py --example
 cargo test --manifest-path rust/arbcore-rs/Cargo.toml
 ```
 

@@ -43,7 +43,12 @@ def main(argv: list[str] | None = None) -> int:
     run("negative validation scenarios", [sys.executable, "scripts/validate_negative_cases.py"])
     run("deterministic demo workflow", [sys.executable, "scripts/demo_workflow.py"])
     run("release readiness report", [sys.executable, "scripts/release_readiness.py"])
+    run(
+        "release evidence example validation",
+        [sys.executable, "scripts/validate_release_evidence.py", "--example"],
+    )
     run("active-tree secret scan", ["./scripts/secret_scan.sh"])
+    run("Git history secret-pattern scan", [sys.executable, "scripts/audit_git_history.py"])
     if args.include_rust:
         if shutil.which("cargo") is None:
             print("cargo is not available; skipping optional Rust validation")

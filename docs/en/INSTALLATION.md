@@ -17,6 +17,13 @@ source .venv/bin/activate
 pip install -e .[dev]
 ```
 
+For reproducible development tooling, install the repository pins first:
+
+```bash
+pip install -r requirements-dev.txt
+pip install -e . --no-deps --no-build-isolation
+```
+
 ## Verify
 
 ```bash

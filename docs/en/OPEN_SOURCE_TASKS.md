@@ -15,6 +15,7 @@ Use this checklist to create GitHub issues and track release readiness work.
 - [ ] CI: enforce secret scanning for full repository history in pull requests.
 - [ ] Policy: define dependency update cadence and ownership.
 - [ ] Release: publish artifact checksums and signed tags.
+- [x] Release tooling: build wheel/sdist artifacts and SHA-256 checksums.
 
 ## P1 - Determinism and Contracts
 

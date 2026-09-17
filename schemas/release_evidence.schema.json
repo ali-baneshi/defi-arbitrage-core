@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/ali-baneshi/defi-arbitrage-core/schemas/release_evidence.schema.json",
+  "title": "ReleaseEvidence",
+  "type": "object",
+  "required": ["schema_version", "release_version", "repository", "gates"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {"type": "integer", "const": 1},
+    "release_version": {"type": "string", "const": "0.1.0-alpha"},
+    "repository": {
+      "type": "object",
+      "required": ["canonical_url", "release_commit", "publication_scope"],
+      "additionalProperties": false,
+      "properties": {
+        "canonical_url": {
+          "type": "string",
+          "const": "https://github.com/ali-baneshi/defi-arbitrage-core"
+        },
+        "release_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "publication_scope": {"type": "string", "minLength": 1}
+      }
+    },
+    "gates": {
+      "type": "object",
+      "required": [
+        "historical_credentials_rotated",
+        "old_git_backups_excluded",
+        "independent_history_scan",
+        "localized_docs_refreshed_or_scoped"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "historical_credentials_rotated": {"$ref": "#/$defs/attestation"},
+        "old_git_backups_excluded": {"$ref": "#/$defs/attestation"},
+        "independent_history_scan": {"$ref": "#/$defs/scan_attestation"},
+        "localized_docs_refreshed_or_scoped": {"$ref": "#/$defs/localization_attestation"}
+      }
+    }
+  },
+  "$defs": {
+    "attestation": {
+      "type": "object",
+      "required": ["status", "attested_by", "attested_on", "notes"],
+      "additionalProperties": false,
+      "properties": {
+        "status": {"type": "string", "enum": ["satisfied", "blocked"]},
+        "attested_by": {"type": "string", "minLength": 1},
+        "attested_on": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$"},
+        "notes": {"type": "string", "minLength": 1}
+      }
+    },
+    "scan_attestation": {
+      "type": "object",
+      "required": ["status", "tool", "scanned_on", "scope", "result", "notes"],
+      "additionalProperties": false,
+      "properties": {
+        "status": {"type": "string", "enum": ["satisfied", "blocked"]},
+        "tool": {"type": "string", "minLength": 1},
+        "scanned_on": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$"},
+        "scope": {"type": "string", "minLength": 1},
+        "result": {"type": "string", "enum": ["pass", "fail", "not-run"]},
+        "report_sha256": {"type": ["string", "null"], "pattern": "^[a-f0-9]{64}$"},
+        "notes": {"type": "string", "minLength": 1}
+      }
+    },
+    "localization_attestation": {
+      "type": "object",
+      "required": ["status", "locales", "source_commit", "reviewed_on", "notes"],
+      "additionalProperties": false,
+      "properties": {
+        "status": {"type": "string", "enum": ["satisfied", "blocked"]},
+        "locales": {
+          "type": "array",
+          "items": {"type": "string", "enum": ["fa", "zh"]},
+          "minItems": 2,
+          "uniqueItems": true
+        },
+        "source_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "reviewed_on": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$"},
+        "notes": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}

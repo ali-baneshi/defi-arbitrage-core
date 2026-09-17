@@ -2,6 +2,11 @@
 
 This document maps machine-readable readiness states to the evidence maintainers must collect before any public release.
 
+The canonical release evidence input is `release/release-evidence.json`, validated
+against `schemas/release_evidence.schema.json`. The repository intentionally ships
+only `release/release-evidence.example.json`; maintainers must create the real
+attestation after completing the external security and history work.
+
 ## Readiness State Model
 
 - `local_validation_ready`: deterministic in-repository checks passed in the active tree.
@@ -16,6 +21,9 @@ This document maps machine-readable readiness states to the evidence maintainers
 - `old_git_backups_excluded`: maintainer attestation that old repositories, `.git` backups, and local archive paths are excluded from publication artifacts.
 - `independent_history_scan`: tool name, scan date, scan scope, and pass/fail result from an independent history scanner outside the dependency-free baseline.
 - `localized_docs_refreshed_or_scoped`: release notes either scope `docs/en` as canonical or document that localized files were refreshed for the release.
+
+The readiness command derives these four statuses from the evidence file. It does
+not accept prose-only claims or the example file as release evidence.
 
 ## Required Machine Evidence
 

@@ -2,7 +2,7 @@
 
 # defi-arbitrage-core
 
-[![CI](https://github.com/ali-baneshi/defi-arbitrage-core-public-mvp/actions/workflows/ci.yml/badge.svg)](https://github.com/ali-baneshi/defi-arbitrage-core-public-mvp/actions)
+[![CI](https://github.com/ali-baneshi/defi-arbitrage-core/actions/workflows/ci.yml/badge.svg)](https://github.com/ali-baneshi/defi-arbitrage-core/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 ![Python](https://img.shields.io/badge/Python-3.11%2B-blue.svg)
 ![Rust](https://img.shields.io/badge/Rust-1.75%2B-orange.svg)

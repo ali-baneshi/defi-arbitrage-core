@@ -291,6 +291,7 @@ def _validate_against_schemas(errors: list[str]) -> None:
             "schemas/contract_validation_report.schema.json",
         ),
         ("fixtures/golden_outputs/release_readiness.json", "schemas/release_readiness.schema.json"),
+        ("release/release-evidence.example.json", "schemas/release_evidence.schema.json"),
     ]
 
     for fixture_path, schema_path in validations:

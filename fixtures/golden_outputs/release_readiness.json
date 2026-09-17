@@ -113,7 +113,7 @@
             "command": "/home/manjaruhp/.pyenv/versions/3.12.8/bin/python -m defi_arbitrage_core.cli --diagnostics",
             "returncode": 0,
             "stdout_json": {
-              "arbcore_version": "0.1.0",
+              "arbcore_version": "0.1.0a1",
               "python": {
                 "version": "3.12.8",
                 "executable": "/home/manjaruhp/.pyenv/versions/3.12.8/bin/python"
@@ -123,7 +123,7 @@
                 "release": "6.12.64-1-MANJARO"
               },
               "repository": {
-                "cwd": "/home/manjaruhp/Documents/Google-antigravity/defi-arbitrage-core-public-mvp",
+                "cwd": ".",
                 "default_snapshot_exists": true,
                 "default_network": "polygon",
                 "contract_manifest_exists": true

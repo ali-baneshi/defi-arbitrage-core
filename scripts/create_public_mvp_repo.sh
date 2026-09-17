@@ -2,11 +2,11 @@
 set -euo pipefail
 
 SRC_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-DEST_DIR="${1:-${SRC_DIR%/*}/defi-arbitrage-core-public-mvp}"
-REPO_NAME="${2:-$(basename "$DEST_DIR")}"
+DEST_DIR="${1:-${SRC_DIR%/*}/defi-arbitrage-core-release-candidate}"
+REPO_NAME="${2:-defi-arbitrage-core}"
 VISIBILITY="${REPO_VISIBILITY:-private}"
 CREATE_REMOTE="${CREATE_REMOTE:-0}"
-INIT_COMMIT_MESSAGE="${INIT_COMMIT_MESSAGE:-Initial public MVP snapshot}"
+INIT_COMMIT_MESSAGE="${INIT_COMMIT_MESSAGE:-Initial public alpha snapshot v0.1.0-alpha}"
 
 if [[ -e "$DEST_DIR" ]]; then
   echo "Destination already exists: $DEST_DIR" >&2
@@ -48,7 +48,7 @@ if [[ "$CREATE_REMOTE" == "1" ]]; then
   gh repo create "$REPO_NAME" --"$VISIBILITY" --source . --remote origin --push
 fi
 
-echo "Created clean MVP repository at: $DEST_DIR"
+echo "Created clean public-alpha repository at: $DEST_DIR"
 if [[ "$CREATE_REMOTE" == "1" ]]; then
   echo "GitHub remote created as a $VISIBILITY repository: $REPO_NAME"
 else

@@ -27,6 +27,7 @@ def main() -> int:
     diagnostics = _load("schemas/diagnostics.schema.json")
     opportunity = _load("schemas/opportunity.schema.json")
     contract_manifest = _load("schemas/contract_manifest.schema.json")
+    release_evidence = _load("schemas/release_evidence.schema.json")
 
     edge_props = snapshot["$defs"]["edge"]["properties"]
     _expect(
@@ -110,6 +111,18 @@ def main() -> int:
         "contract artifact networks enum",
         network_items.get("enum"),
         ["local"],
+    )
+    _expect(
+        errors,
+        "release evidence schema version",
+        release_evidence["properties"]["schema_version"].get("const"),
+        1,
+    )
+    _expect(
+        errors,
+        "release evidence release version",
+        release_evidence["properties"]["release_version"].get("const"),
+        "0.1.0-alpha",
     )
 
     if errors:

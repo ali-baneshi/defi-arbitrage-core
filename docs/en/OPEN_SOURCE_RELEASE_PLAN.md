@@ -29,7 +29,7 @@ Exit criteria:
 ## Phase 1: Security and Hardening (P1)
 
 - Supply-chain and dependency controls
-  - Pin dev tooling versions in CI jobs.
+  - Pin dev tooling versions in `requirements-dev.txt` and CI jobs.
   - Add dependency vulnerability scan in CI.
   - Add secret scanning for commits and pull requests.
 - Runtime safeguards

@@ -5,8 +5,8 @@ English documentation in `docs/en/` is canonical for release, validation, securi
 | Locale | Status | Release-Critical? | Notes |
 | --- | --- | --- | --- |
 | English (`docs/en`) | canonical-current | yes | Source of truth for public release decisions. |
-| Persian (`docs/fa`) | localized-current | no | Mirrored public documentation set refreshed against the current English docs; English remains canonical for release details. |
-| Chinese (`docs/zh`) | localized-current | no | Mirrored public documentation set refreshed against the current English docs; English remains canonical for release details. |
+| Persian (`docs/fa`) | localized-current-pending-review | no | Release-critical pages and missing mirror pages were refreshed in this release candidate; maintainer language review is still required. |
+| Chinese (`docs/zh`) | localized-current-pending-review | no | Release-critical pages and missing mirror pages were refreshed in this release candidate; maintainer language review is still required. |
 
 ## Translation Process
 

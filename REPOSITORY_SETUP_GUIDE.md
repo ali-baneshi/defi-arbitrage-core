@@ -1,6 +1,6 @@
 # Repository Setup Guide
 
-This guide explains how to create a new private repository copy of this project for your initial MVP release.
+This guide explains how to create a clean repository copy for the `0.1.0-alpha` release. Public visibility remains gated by the release evidence workflow.
 
 ## Prerequisites
 
@@ -19,13 +19,13 @@ bash scripts/create_new_repo.sh
 ```
 
 This will:
-1. Create a new directory at `~/Documents/Google-antigravity/defi-arbitrage-core-mvp-v1`
+1. Create a new directory at `~/Documents/Google-antigravity/defi-arbitrage-core`
 2. Copy all project files (excluding .git, build artifacts, and temporary files)
 3. Initialize a fresh git repository with clean history
 4. Create an initial commit with comprehensive release notes
 5. Create a private GitHub repository (if `gh` CLI is available)
 6. Add repository topics for discoverability
-7. Create a v1.0.0 release tag
+7. Prepare a v0.1.0-alpha release tag
 
 ## Manual Steps (if gh CLI is not available)
 
@@ -34,19 +34,19 @@ If you don't have GitHub CLI installed, follow these steps after running the scr
 ### 1. Create Repository on GitHub
 
 Go to https://github.com/new and create a new **private** repository:
-- Repository name: `defi-arbitrage-core-mvp-v1`
-- Description: `DeFi arbitrage analysis infrastructure - MVP v1.0.0`
+- Repository name: `defi-arbitrage-core`
+- Description: `DeFi arbitrage analysis infrastructure - public alpha v0.1.0-alpha`
 - Visibility: **Private**
 - Do NOT initialize with README, .gitignore, or license (we already have these)
 
 ### 2. Push to GitHub
 
 ```bash
-cd ~/Documents/Google-antigravity/defi-arbitrage-core-mvp-v1
-git remote add origin https://github.com/ali-baneshi/defi-arbitrage-core-mvp-v1.git
+cd ~/Documents/Google-antigravity/defi-arbitrage-core
+git remote add origin https://github.com/ali-baneshi/defi-arbitrage-core.git
 git branch -M main
 git push -u origin main
-git push origin v1.0.0
+git push origin v0.1.0-alpha
 ```
 
 ### 3. Configure Repository Settings
@@ -77,7 +77,7 @@ After repository creation, verify everything is correct:
 ### 1. Check Repository Structure
 
 ```bash
-cd ~/Documents/Google-antigravity/defi-arbitrage-core-mvp-v1
+cd ~/Documents/Google-antigravity/defi-arbitrage-core
 ls -la
 ```
 
@@ -92,7 +92,7 @@ You should see:
 git log --oneline
 ```
 
-Should show only one commit: "Initial MVP release v1.0.0"
+Should show the clean alpha release commit.
 
 ### 3. Verify Git Tags
 
@@ -100,7 +100,7 @@ Should show only one commit: "Initial MVP release v1.0.0"
 git tag -l
 ```
 
-Should show: `v1.0.0`
+Should show: `v0.1.0-alpha` after release gates are satisfied.
 
 ### 4. Run Validation Suite
 
@@ -129,7 +129,7 @@ Should show your new repository URL.
 To make public:
 
 ```bash
-cd ~/Documents/Google-antigravity/defi-arbitrage-core-mvp-v1
+cd ~/Documents/Google-antigravity/defi-arbitrage-core
 gh repo edit --visibility public
 ```
 
@@ -155,7 +155,7 @@ GITHUB_USERNAME="your-github-username"
 ### Error: Target directory already exists
 
 If you see this error, either:
-1. Remove the existing directory: `rm -rf ~/Documents/Google-antigravity/defi-arbitrage-core-mvp-v1`
+1. Choose a different `NEW_REPO_PATH` or remove the existing target directory after verifying it is disposable.
 2. Or change `NEW_REPO_NAME` in the script
 
 ### Error: gh command not found
@@ -208,7 +208,7 @@ After creating the new repository:
 - [ ] Push to GitHub
 - [ ] Add repository topics
 - [ ] Configure repository settings
-- [ ] Create GitHub release from v1.0.0 tag
+- [ ] Create GitHub release from the signed v0.1.0-alpha tag
 - [ ] Update repository description
 - [ ] Consider making public (when ready)
 
@@ -218,8 +218,8 @@ After pushing the tag, create a release on GitHub:
 
 1. Go to your repository on GitHub
 2. Click "Releases" → "Create a new release"
-3. Choose tag: `v1.0.0`
-4. Release title: `MVP Release v1.0.0`
+3. Choose tag: `v0.1.0-alpha`
+4. Release title: `Public Alpha Release v0.1.0-alpha`
 5. Description: Use the content from the tag message
 6. Mark as "pre-release" if still in alpha
 7. Publish release

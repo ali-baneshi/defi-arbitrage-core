@@ -54,7 +54,7 @@ echo "║  Repository Creation Summary                                   ║"
 echo "╚════════════════════════════════════════════════════════════════╝"
 echo ""
 
-NEW_REPO_PATH="${HOME}/Documents/Google-antigravity/defi-arbitrage-core-mvp-v1"
+NEW_REPO_PATH="${NEW_REPO_PATH:-${HOME}/Documents/Google-antigravity/defi-arbitrage-core}"
 
 if [ -d "${NEW_REPO_PATH}" ]; then
     echo "✓ Repository created at: ${NEW_REPO_PATH}"
@@ -82,18 +82,18 @@ if [ -d "${NEW_REPO_PATH}" ]; then
         echo ""
         echo "2. Configure remote and push:"
         echo "   cd ${NEW_REPO_PATH}"
-        echo "   git remote add origin https://github.com/ali-baneshi/defi-arbitrage-core-mvp-v1.git"
+        echo "   git remote add origin https://github.com/ali-baneshi/defi-arbitrage-core.git"
         echo "   git branch -M main"
         echo "   git push -u origin main"
-        echo "   git push origin v1.0.0"
+        echo "   git push origin v0.1.0-alpha"
         echo ""
     else
         echo "1. Push the release tag:"
         echo "   cd ${NEW_REPO_PATH}"
-        echo "   git push origin v1.0.0"
+        echo "   git push origin v0.1.0-alpha"
         echo ""
         echo "2. Create GitHub release:"
-        echo "   gh release create v1.0.0 --title 'MVP Release v1.0.0' --notes-file <(git tag -l --format='%(contents)' v1.0.0)"
+        echo "   gh release create v0.1.0-alpha --title 'Alpha Release v0.1.0-alpha' --notes-file <(git tag -l --format='%(contents)' v0.1.0-alpha)"
         echo ""
     fi
     

@@ -1,5 +1,5 @@
 {
-    "arbcore_version": "0.1.0",
+    "arbcore_version": "0.1.0a1",
     "python": {
         "version": "3.13.11",
         "executable": "/usr/bin/python"

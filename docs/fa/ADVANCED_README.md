@@ -69,7 +69,7 @@ adoption سالم این repository را به‌عنوان یک bot جادویی
 سیستم snapshotهای JSON محلی را که با schema مستند شده مطابقت دارند، می‌پذیرد. این مرز صریح و validation‌شده است:
 
 - **Schema Validation**: هر snapshot قبل از پردازش با `schemas/market_snapshot.schema.json` بررسی می‌شود
-- **Business Rule Validation**: هویت network، سلامت edge، محدوده liquidity و معقول‌بودن fee اجباری است
+- **Business Rule Validation**: برچسب network، سلامت edge، محدوده liquidity و بازه fee بررسی می‌شود
 - **Fail-Closed Semantics**: ورودی نامعتبر زود و با پیام خطای ساخت‌یافته رد می‌شود، هرگز بی‌صدا نادیده گرفته نمی‌شود
 - **No Network Assumptions**: سیستم هرگز داده fetch نمی‌کند، هرگز RPC در دسترس فرض نمی‌کند، هرگز API key نمی‌خواهد
 
@@ -79,9 +79,9 @@ adoption سالم این repository را به‌عنوان یک bot جادویی
 
 داخل مرز، سیستم روی تحلیل قطعی graph تمرکز دارد:
 
-- **Cycle Detection**: شمارش چرخه محدود مبتنی بر Bellman-Ford با محدودیت عمق قابل تنظیم
+- **Cycle Detection**: شمارش چرخه محدود مبتنی بر DFS با محدودیت عمق قابل تنظیم
 - **Rate Composition**: محاسبه ضربی rate با کسر صریح fee در هر hop
-- **Liquidity Constraints**: تخمین ظرفیت بر اساس liquidity محدودکننده در هر مسیر
+- **Liquidity Constraints**: تخمین خطی ظرفیت به واحد asset شروع مسیر؛ liquidity ناقص با پرچم مشخص می‌شود
 - **Policy Filtering**: آستانه حداقل سود قابل تنظیم، حداکثر طول مسیر و قوانین خاص شبکه
 
 engine طراحی شده تا برای ورودی یکسان، خروجی یکسان تولید کند، صرف‌نظر از محیط اجرا، timestamp یا وضعیت سیستم. این قطعیت برای research قابل تکرار، regression testing و deployment چندمحیطی حیاتی است.
@@ -226,7 +226,7 @@ schemaهای JSON زیر `schemas/` contractهای عمومی را مستند م
 فراتر از schema validation، سیستم business ruleها را اجباری می‌کند:
 
 - **Network Identity**: فیلد `network` باید موجود و غیرخالی باشد
-- **Edge Sanity**: rateها باید مثبت، feeها باید غیرمنفی، liquidity باید مثبت باشد
+- **Edge Sanity**: rateها باید مثبت، feeها در بازه پشتیبانی‌شده و liquidity در صورت وجود غیرمنفی باشد
 - **Symbol Consistency**: edgeها باید مسیرهای معتبر تشکیل دهند (target edge N باید با source edge N+1 مطابقت کند)
 - **Bounded Complexity**: snapshotها نمی‌توانند از حداکثر تعداد edge تجاوز کنند (از DoS از طریق graphهای عظیم جلوگیری می‌کند)
 

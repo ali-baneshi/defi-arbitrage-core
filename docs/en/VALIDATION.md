@@ -37,6 +37,7 @@ PYTHONPATH=src python scripts/demo_workflow.py
 PYTHONPATH=src python scripts/validate_negative_cases.py
 PYTHONPATH=src python scripts/validate_contracts.py --json
 PYTHONPATH=src python scripts/release_readiness.py --json
+PYTHONPATH=src python scripts/validate_release_evidence.py --example
 ```
 
 `demo_workflow.py` verifies that the profitable example produces a positive opportunity, the no-opportunity example returns an empty list, and contract validation succeeds.
@@ -70,6 +71,10 @@ Run these only where the tools are already installed or in CI. Do not install ne
 ## Release Readiness Report
 
 `PYTHONPATH=src python scripts/release_readiness.py --json` intentionally reports `public_release_ready: false` until manual gates are completed: historical credential rotation, exclusion of old `.git` backups, independent history scanning, and localization scope/refresh. A `true` local validation result is not permission to publish.
+
+The readiness command reads the non-secret `release/release-evidence.json`
+attestation when present. The repository ships only a blocked example; do not
+replace blocked statuses with claims that have not been externally verified.
 
 ## Fail-Closed Behavior Covered
 

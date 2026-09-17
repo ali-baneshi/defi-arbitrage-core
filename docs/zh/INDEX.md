@@ -15,6 +15,17 @@
 - `MIGRATION.md` — 相比旧系统的变化
 - `HISTORY_CLEANUP.md` — Git 历史清理记录
 - `rust/arbcore-rs/README.md` — 可选 Rust analyzer
+- `STATUS.md` — 当前成熟度、支持能力与 readiness 状态
+- `VALIDATION.md` — validation 与 release evidence 工作流
+- `RELEASE_EVIDENCE.md` — public release 所需证据
+- `PROJECT_BOUNDARIES.md` — 项目 canonical 边界
+- `SUPPORT_MATRIX.md` — 支持矩阵与明确不支持的能力
+- `REVIEWER_GUIDE.md` — reviewer 指南与 canonical 来源
+- `TRUST_BOUNDARIES.md` — 信任边界与不受信输入
+- `CONTRACTS.md` — Solidity/Vyper template 与 validator 限制
+- `RUNBOOK.md` — validation 与 release 操作
+- `OPEN_SOURCE_RELEASE_PLAN.md` — public release 计划
+- `OPEN_SOURCE_TASKS.md` — hardening 任务清单
 
 ## Notice
 

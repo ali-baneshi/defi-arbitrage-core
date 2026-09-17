@@ -12,13 +12,13 @@ That's it! This single command will:
 - ✅ Initialize fresh git repository
 - ✅ Create GitHub repository (if gh CLI available)
 - ✅ Configure topics and settings
-- ✅ Create v1.0.0 release tag
+- ✅ Prepare the v0.1.0-alpha release tag
 
 ## 📍 What You Get
 
 A new private repository at:
 ```
-~/Documents/Google-antigravity/defi-arbitrage-core-mvp-v1
+~/Documents/Google-antigravity/defi-arbitrage-core
 ```
 
 With:
@@ -32,7 +32,7 @@ With:
 ## 🔍 Verify Everything Works
 
 ```bash
-cd ~/Documents/Google-antigravity/defi-arbitrage-core-mvp-v1
+cd ~/Documents/Google-antigravity/defi-arbitrage-core
 PYTHONPATH=src python scripts/validate_all.py
 ```
 
@@ -46,7 +46,7 @@ PYTHONPATH=src python scripts/validate_all.py
 ## 🌐 Make It Public (When Ready)
 
 ```bash
-cd ~/Documents/Google-antigravity/defi-arbitrage-core-mvp-v1
+cd ~/Documents/Google-antigravity/defi-arbitrage-core
 gh repo edit --visibility public
 ```
 

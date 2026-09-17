@@ -26,6 +26,7 @@ REQUIRED_DOCS = (
     "docs/en/SUPPORT_MATRIX.md",
     "docs/en/OPEN_SOURCE_RELEASE_PLAN.md",
     "docs/en/OPEN_SOURCE_TASKS.md",
+    "release/README.md",
 )
 REQUIRED_SCHEMAS = (
     "schemas/diagnostics.schema.json",
@@ -37,6 +38,7 @@ REQUIRED_SCHEMAS = (
     "schemas/contract_validation_report.schema.json",
     "schemas/release_readiness.schema.json",
     "schemas/validation_summary.schema.json",
+    "schemas/release_evidence.schema.json",
 )
 REQUIRED_COMMANDS = (
     "PYTHONPATH=src python scripts/validate_all.py",
@@ -63,6 +65,8 @@ def main() -> int:
     errors.extend(check_project_boundary_doc())
     errors.extend(check_release_readiness_model())
     errors.extend(check_release_evidence_doc())
+    errors.extend(check_release_identity())
+    errors.extend(check_localization_parity())
     errors.extend(check_support_matrix_doc())
     errors.extend(check_version_consistency())
     errors.extend(check_ci_coverage())
@@ -247,6 +251,33 @@ def check_version_consistency() -> list[str]:
     if expected not in init_text:
         return [f"package version mismatch: expected {expected}"]
     return []
+
+
+def check_release_identity() -> list[str]:
+    pyproject = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))
+    errors: list[str] = []
+    if pyproject["project"]["version"] != "0.1.0a1":
+        errors.append("release package version must be 0.1.0a1")
+    urls = pyproject["project"].get("urls", {})
+    canonical = "https://github.com/ali-baneshi/defi-arbitrage-core"
+    for key in ("Homepage", "Repository", "Security"):
+        if not str(urls.get(key, "")).startswith(canonical):
+            errors.append(f"pyproject URL {key} must use the canonical repository")
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+    if "defi-arbitrage-core-public-mvp" in readme:
+        errors.append("README contains stale public-mvp repository URL")
+    return errors
+
+
+def check_localization_parity() -> list[str]:
+    english = {path.name for path in (ROOT / "docs" / "en").glob("*.md")}
+    errors: list[str] = []
+    for locale in ("fa", "zh"):
+        localized = {path.name for path in (ROOT / "docs" / locale).glob("*.md")}
+        missing = sorted(english - localized)
+        if missing:
+            errors.append(f"docs/{locale} is missing localized pages: {', '.join(missing)}")
+    return errors
 
 
 def check_ci_coverage() -> list[str]:

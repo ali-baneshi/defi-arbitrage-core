@@ -7,7 +7,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 # Configuration (can be overridden by environment variables)
-NEW_REPO_NAME="${NEW_REPO_NAME:-defi-arbitrage-core-mvp-v1}"
+NEW_REPO_NAME="${NEW_REPO_NAME:-defi-arbitrage-core}"
 NEW_REPO_PATH="${NEW_REPO_PATH:-${HOME}/Documents/Google-antigravity/${NEW_REPO_NAME}}"
 GITHUB_USERNAME="${GITHUB_USERNAME:-ali-baneshi}"
 
@@ -64,9 +64,9 @@ git config user.email "ali.baneshi@example.com"
 # Step 4: Create initial commit
 echo "Step 4: Creating initial commit..."
 git add .
-git commit -m "Initial MVP release v1.0.0
+git commit -m "Initial alpha release v0.1.0-alpha
 
-This is the first public-ready version of defi-arbitrage-core.
+This is the first public alpha version of defi-arbitrage-core.
 
 Features:
 - Offline market snapshot analysis
@@ -89,7 +89,7 @@ if command -v gh &> /dev/null; then
     gh repo create "${GITHUB_USERNAME}/${NEW_REPO_NAME}" \
         --private \
         --source="${NEW_REPO_PATH}" \
-        --description="DeFi arbitrage analysis infrastructure - MVP v1.0.0" \
+        --description="Offline DeFi arbitrage analysis infrastructure - v0.1.0-alpha" \
         --push
     
     echo "Repository created and pushed successfully!"
@@ -130,9 +130,9 @@ fi
 # Step 7: Create release tag
 echo "Step 7: Creating release tag..."
 cd "${NEW_REPO_PATH}"
-git tag -a v1.0.0 -m "MVP Release v1.0.0
+git tag -a v0.1.0-alpha -m "Alpha Release v0.1.0-alpha
 
-First public-ready release of defi-arbitrage-core infrastructure.
+First public alpha release of defi-arbitrage-core infrastructure.
 
 This is an alpha-quality offline analysis kernel suitable for:
 - Research and education
@@ -156,6 +156,6 @@ echo "New repository location: ${NEW_REPO_PATH}"
 echo ""
 echo "Next steps:"
 echo "1. Review the repository contents"
-echo "2. Push the tag: cd ${NEW_REPO_PATH} && git push origin v1.0.0"
+echo "2. Push the tag: cd ${NEW_REPO_PATH} && git push origin v0.1.0-alpha"
 echo "3. Make the repository public when ready: gh repo edit --visibility public"
 echo ""

@@ -62,6 +62,7 @@ PYTHONPATH=src python scripts/validate_all.py --include-rust
 
 - Confirm `.env` and `.env.*` are not tracked.
 - Run `./scripts/secret_scan.sh`.
+- Run `PYTHONPATH=src python scripts/audit_git_history.py`.
 - Review `contracts/` for real addresses, RPC URLs, deployment claims, unsafe primitives, or missing `NOT AUDITED` notices.
 - Review `schemas/` after changing public JSON contracts.
 - Confirm docs do not claim production readiness.
@@ -85,6 +86,18 @@ PYTHONPATH=src python scripts/validate_all.py --include-rust
 3. Run `PYTHONPATH=src python scripts/release_readiness.py --json` and archive the output.
 4. Confirm `docs/en/OPEN_SOURCE_RELEASE_PLAN.md` and `docs/en/OPEN_SOURCE_TASKS.md` reflect current status.
 5. If any gate fails, do not tag a release; open/attach a release-hardening issue and rerun after fixes.
+
+Build distributions and checksums with:
+
+```bash
+python -m pip install -r requirements-release.txt
+python scripts/build_release_artifacts.py
+```
+
+The release evidence file is deliberately non-secret and must not contain keys,
+tokens, private paths, or scanner output that embeds sensitive values. Use
+`release/release-evidence.example.json` as the structural template and keep the
+completed attestation under maintainer review until all external gates pass.
 
 ## Pre-Merge Operator Checklist
 

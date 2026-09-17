@@ -69,7 +69,7 @@ Provider 和可选 accelerator 都被视为不可信边界。Provider 可能读�
 系统接收符合文档化 schema 的本地 JSON snapshot。这个边界是显式且经过 validation 的：
 
 - **Schema Validation**：每个 snapshot 在处理前都会与 `schemas/market_snapshot.schema.json` 进行检查
-- **Business Rule Validation**：强制执行 network 身份、edge 合理性、liquidity 边界和 fee 合理性
+- **Business Rule Validation**：检查 network 标签、edge 合法性、liquidity 边界和 fee 范围
 - **Fail-Closed Semantics**：无效输入会被提前拒绝并返回结构化错误消息，绝不会被静默忽略
 - **No Network Assumptions**：系统从不 fetch 数据，从不假设 RPC 可用，从不要求 API key
 
@@ -79,9 +79,9 @@ Provider 和可选 accelerator 都被视为不可信边界。Provider 可能读�
 
 在边界内部，系统专注于确定性 graph 分析：
 
-- **Cycle Detection**：基于 Bellman-Ford 的有界循环枚举，具有可配置的深度限制
+- **Cycle Detection**：基于 DFS 的有界循环枚举，具有可配置的深度限制
 - **Rate Composition**：乘法 rate 计算，在每个 hop 显式扣除 fee
-- **Liquidity Constraints**：基于每条路径中的限制性 liquidity 进行容量估算
+- **Liquidity Constraints**：将线性容量边界换算为起始资产单位，并标记不完整的 liquidity
 - **Policy Filtering**：可配置的最低利润阈值、最大路径长度和网络特定规则
 
 Engine 被设计为对相同输入产生相同输出，无论执行环境、时间戳或系统状态如何。这种确定性对于可重现研究、回归测试和多环境部署至关重要。

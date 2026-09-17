@@ -4,6 +4,10 @@ All notable changes to `defi-arbitrage-core` should be documented in this file.
 
 ## Unreleased
 
+### Release preparation
+- Align package and repository metadata with the canonical `defi-arbitrage-core` repository.
+- Prepare the `0.1.0-alpha` release evidence and publication checks.
+
 ### Added
 - Explicit multi-network snapshot and opportunity support through the `network` field
 - Public `defi_arbitrage_core` Python package alias and `defi-arbitrage-core` CLI entrypoint

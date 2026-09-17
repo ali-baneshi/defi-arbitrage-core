@@ -67,3 +67,7 @@
 - release evidence 已被保存和归档
 - repository 描述与 topics 符合真实 scope
 - 没有文档暗示 live trading 或 production safety
+
+本次 release 的 canonical repository：
+
+`https://github.com/ali-baneshi/defi-arbitrage-core`

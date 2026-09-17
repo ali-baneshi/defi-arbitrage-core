@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "release_version": "0.1.0-alpha",
+  "repository": {
+    "canonical_url": "https://github.com/ali-baneshi/defi-arbitrage-core",
+    "release_commit": "0000000000000000000000000000000000000000",
+    "publication_scope": "Public alpha offline analysis core; production readiness remains false."
+  },
+  "gates": {
+    "historical_credentials_rotated": {
+      "status": "blocked",
+      "attested_by": "maintainer",
+      "attested_on": "2026-09-17",
+      "notes": "Replace with an external attestation after rotating every credential class found or suspected in prior history. Do not record secret values."
+    },
+    "old_git_backups_excluded": {
+      "status": "blocked",
+      "attested_by": "maintainer",
+      "attested_on": "2026-09-17",
+      "notes": "Replace after checking all publication paths and excluding old repositories and .git backups."
+    },
+    "independent_history_scan": {
+      "status": "blocked",
+      "tool": "not-run",
+      "scanned_on": "2026-09-17",
+      "scope": "All reachable and unreachable Git history plus the publication archive",
+      "result": "not-run",
+      "report_sha256": null,
+      "notes": "Run an independent full-history scanner and attach its report checksum."
+    },
+    "localized_docs_refreshed_or_scoped": {
+      "status": "blocked",
+      "locales": ["fa", "zh"],
+      "source_commit": "0000000000000000000000000000000000000000",
+      "reviewed_on": "2026-09-17",
+      "notes": "Replace after Persian and Chinese documentation mirrors are fully refreshed and reviewed."
+    }
+  }
+}

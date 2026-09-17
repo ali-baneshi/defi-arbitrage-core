@@ -67,3 +67,7 @@
 - release evidence ثبت و بایگانی شده است
 - description و topicهای repository با scope واقعی آن هماهنگ‌اند
 - هیچ docای ادعای live trading یا production safety نمی‌کند
+
+مخزن canonical این release:
+
+`https://github.com/ali-baneshi/defi-arbitrage-core`

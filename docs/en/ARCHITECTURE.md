@@ -56,7 +56,7 @@ This is template support only. The repository does not compile, deploy, audit, o
 
 ## Public Data Contracts
 
-Schemas live in `schemas/` for snapshots, opportunities, contract manifests, and contract validation reports. Runtime validation remains dependency-free so the core can run in constrained environments.
+Schemas live in `schemas/` for snapshots, opportunities, contract manifests, contract validation reports, and non-secret release evidence. Runtime validation remains dependency-free so the core can run in constrained environments.
 
 ## Multi-Network Boundary
 
