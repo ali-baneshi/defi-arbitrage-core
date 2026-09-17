@@ -21,6 +21,14 @@ def test_json_provider_loads_edges(tmp_path):
     assert snapshot.edges[0].target == "Y"
 
 
+def test_json_provider_uses_stable_local_source_default(tmp_path):
+    path = tmp_path / "snapshot.json"
+    path.write_text(
+        json.dumps({"edges": [{"source": "x", "target": "y", "rate": 1.2}]})
+    )
+    assert JsonFileProvider(path).load_snapshot().source == "local"
+
+
 def test_json_provider_rejects_missing_edges(tmp_path):
     path = tmp_path / "snapshot.json"
     path.write_text(json.dumps({"source": "bad"}))

@@ -53,6 +53,29 @@ def test_max_notional_caps_estimated_capacity():
     assert opportunities[0].estimated_capacity == 100
 
 
+def test_capacity_is_converted_back_to_starting_asset_units():
+    snapshot = MarketSnapshot(
+        edges=(
+            Edge("A", "B", 2.0, liquidity=1000),
+            Edge("B", "A", 0.6, liquidity=300),
+        )
+    )
+    opportunity = AnalysisEngine(RiskPolicy(min_profit_bps=1, max_notional=1000)).analyze(
+        snapshot
+    )[0]
+    # The second edge allows 300 B, which is 150 A at the quoted 2 A->B rate.
+    assert opportunity.estimated_capacity == 150
+    assert opportunity.capacity_known is True
+
+
+def test_unknown_liquidity_is_explicit():
+    snapshot = MarketSnapshot(
+        edges=(Edge("A", "B", 2.0), Edge("B", "A", 0.6, liquidity=300))
+    )
+    opportunity = AnalysisEngine(RiskPolicy(min_profit_bps=1)).analyze(snapshot)[0]
+    assert opportunity.capacity_known is False
+
+
 def test_max_results_limits_output():
     snapshot = MarketSnapshot(
         edges=(

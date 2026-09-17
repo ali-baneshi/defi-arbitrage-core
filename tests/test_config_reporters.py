@@ -23,6 +23,9 @@ def test_reporters_render_outputs():
         profit_bps=1000,
         limiting_liquidity=50,
         estimated_capacity=25,
+        capacity_known=True,
+        snapshot_source="test",
+        snapshot_timestamp=None,
     )
     assert "[polygon] A -> B -> A" in TextReporter().render([opportunity])
     assert json.loads(JsonReporter().render([opportunity]))[0]["estimated_capacity"] == 25

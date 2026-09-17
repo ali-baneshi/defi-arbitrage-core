@@ -5,7 +5,7 @@
   "type": "array",
   "items": {
     "type": "object",
-    "required": ["network", "path", "venues", "gross_return", "profit_bps", "limiting_liquidity", "estimated_capacity"],
+    "required": ["network", "path", "venues", "gross_return", "profit_bps", "limiting_liquidity", "estimated_capacity", "capacity_known", "snapshot_source", "snapshot_timestamp"],
     "additionalProperties": false,
     "properties": {
       "network": {"type": "string", "minLength": 1, "maxLength": 64},
@@ -22,7 +22,10 @@
       "gross_return": {"type": "number"},
       "profit_bps": {"type": "number"},
       "limiting_liquidity": {"type": ["number", "null"], "minimum": 0},
-      "estimated_capacity": {"type": "number", "minimum": 0}
+      "estimated_capacity": {"type": "number", "minimum": 0},
+      "capacity_known": {"type": "boolean"},
+      "snapshot_source": {"type": "string", "minLength": 1, "maxLength": 120},
+      "snapshot_timestamp": {"type": ["string", "null"], "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"}
     }
   }
 }

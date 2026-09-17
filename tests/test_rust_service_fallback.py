@@ -33,6 +33,9 @@ def test_rust_response_rejects_open_path():
                 "profit_bps": 1000,
                 "limiting_liquidity": 10,
                 "estimated_capacity": 10,
+                "capacity_known": True,
+                "snapshot_source": "test",
+                "snapshot_timestamp": None,
             }
         )
     except RustServiceUnavailable as exc:
@@ -52,6 +55,9 @@ def test_rust_response_rejects_venue_hop_mismatch():
                 "profit_bps": 1000,
                 "limiting_liquidity": 10,
                 "estimated_capacity": 10,
+                "capacity_known": True,
+                "snapshot_source": "test",
+                "snapshot_timestamp": None,
             }
         )
     except RustServiceUnavailable as exc:
@@ -71,6 +77,9 @@ def test_rust_response_rejects_invalid_numeric_fields():
                 "profit_bps": 1000,
                 "limiting_liquidity": 10,
                 "estimated_capacity": 10,
+                "capacity_known": True,
+                "snapshot_source": "test",
+                "snapshot_timestamp": None,
             }
         )
     except RustServiceUnavailable as exc:
@@ -90,6 +99,9 @@ def test_rust_response_rejects_blank_network():
                 "profit_bps": 1000,
                 "limiting_liquidity": 10,
                 "estimated_capacity": 10,
+                "capacity_known": True,
+                "snapshot_source": "test",
+                "snapshot_timestamp": None,
             }
         )
     except RustServiceUnavailable as exc:

@@ -21,7 +21,7 @@ It is built for researchers, quantitative developers, protocol analysts, and bac
 
 - Validates local DeFi market snapshots with fail-closed rules
 - Analyzes bounded exchange-rate cycles across multiple EVM-style networks
-- Produces stable text and JSON output for downstream systems
+- Produces stable text and JSON candidate-opportunity output for downstream systems
 - Exposes extension points for providers, reporters, policies, and optional Rust-backed analysis
 
 ## What This Project Does Not Do
@@ -45,13 +45,15 @@ A lot of DeFi repositories mix experimentation, execution logic, secrets, and in
 
 The current release is an offline alpha MVP for analysis infrastructure. It is suitable for local validation, simulation, route analysis, integration testing, reviewer evaluation, and as a foundation for larger systems that add their own ingestion and execution layers.
 
+Returned profit is nominal: it is derived from supplied linear rates and fees. The core does not model slippage, gas, latency, MEV, token decimals, or executable AMM/order-book depth. Treat `estimated_capacity` as a starting-asset-unit bound from supplied liquidity, not as executable size.
+
 ## Minimal Example
 
 Input snapshot:
 
 ```json
 {
-  "source": "research-snapshot",
+  "source": "example-base-snapshot",
   "network": "base",
   "timestamp": "2026-05-05T00:00:00Z",
   "edges": [
@@ -79,7 +81,10 @@ Output:
     "gross_return": 1.013118627069043,
     "profit_bps": 131.18627069043097,
     "limiting_liquidity": 85000.0,
-    "estimated_capacity": 10000.0
+    "estimated_capacity": 10000.0,
+    "capacity_known": true,
+    "snapshot_source": "example-base-snapshot",
+    "snapshot_timestamp": "2026-05-05T00:00:00Z"
   }
 ]
 ```

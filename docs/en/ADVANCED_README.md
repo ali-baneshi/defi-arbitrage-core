@@ -68,8 +68,8 @@ Teams should understand the contracts, validate their snapshots, review the fail
 
 The system accepts local JSON snapshots that conform to the documented schema. This boundary is explicit and validated:
 
-- **Schema Validation**: Every snapshot is checked against `schemas/market_snapshot.schema.json` before processing
-- **Business Rule Validation**: Network identity, edge sanity, liquidity bounds, and fee reasonableness are enforced
+- **Schema Validation**: Every snapshot is checked against the documented snapshot contract before processing
+- **Business Rule Validation**: Network labels, edge sanity, liquidity bounds, and fee ranges are enforced
 - **Fail-Closed Semantics**: Invalid input is rejected early with structured error messages, never silently ignored
 - **No Network Assumptions**: The system never fetches data, never assumes RPC availability, never requires API keys
 
@@ -79,9 +79,9 @@ This design means you can test the entire analysis pipeline with fixture files, 
 
 Inside the boundary, the system focuses on deterministic graph analysis:
 
-- **Cycle Detection**: Bellman-Ford-based bounded cycle enumeration with configurable depth limits
+- **Cycle Detection**: Bounded depth-first cycle enumeration with configurable depth limits
 - **Rate Composition**: Multiplicative rate calculation with explicit fee deduction at each hop
-- **Liquidity Constraints**: Capacity estimation based on the limiting liquidity in each path
+- **Liquidity Constraints**: Linear capacity bounds converted into starting-asset units; incomplete liquidity is flagged
 - **Policy Filtering**: Configurable minimum profit thresholds, maximum path length, and network-specific rules
 
 The engine is designed to produce identical output for identical input, regardless of execution environment, timestamp, or system state. This determinism is critical for reproducible research, regression testing, and multi-environment deployment.
@@ -226,9 +226,9 @@ These schemas serve multiple purposes:
 Beyond schema validation, the system enforces business rules:
 
 - **Network Identity**: The `network` field must be present and non-empty
-- **Edge Sanity**: Rates must be positive, fees must be non-negative, liquidity must be positive
+- **Edge Sanity**: Rates must be positive, fees must be within the supported range, and liquidity must be non-negative when supplied
 - **Symbol Consistency**: Edges must form valid paths (target of edge N must match source of edge N+1)
-- **Bounded Complexity**: Snapshots cannot exceed maximum edge count (prevents DoS via huge graphs)
+- **Bounded Complexity**: Snapshots, metadata, hop depth, result count, and node degree are capped; dense graphs may still be expensive
 
 These checks protect against:
 

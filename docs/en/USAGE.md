@@ -47,6 +47,10 @@ opportunities = AnalysisEngine(policy).analyze(snapshot)
 
 `rate` is units of `target` received for one unit of `source` before fees. `liquidity` is optional and expressed in source-asset units.
 
+The output includes `capacity_known`, `snapshot_source`, and `snapshot_timestamp`. `estimated_capacity` is expressed in the starting asset's units after converting each supplied hop liquidity bound through the preceding linear rates. `limiting_liquidity` is only a raw diagnostic minimum and may combine different asset units. Missing liquidity does not make capacity trustworthy: it produces `capacity_known: false`.
+
+This is nominal analysis only. The core does not model slippage, gas, token decimals, latency, MEV, or executable venue depth.
+
 ## Contract Validation
 
 ```bash

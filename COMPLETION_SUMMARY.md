@@ -229,4 +229,4 @@ The repository is now:
 **Documentation Quality**: Professional
 **Automation Level**: Complete
 **Multi-Language Support**: English, Persian, Chinese
-**Ready for Public Release**: Yes (after user security review)
+**Ready for Public Release**: No; local validation passes, but manual history, credential, independent-scan, and documentation gates remain unresolved.

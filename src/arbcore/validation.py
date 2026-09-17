@@ -18,6 +18,10 @@ SNAPSHOT_SCHEMA_VERSION = "2020-12"
 MAX_SNAPSHOT_EDGES = 10_000
 
 
+def _is_number(value: object) -> bool:
+    return isinstance(value, (int, float)) and not isinstance(value, bool)
+
+
 def snapshot_to_dict(snapshot: MarketSnapshot) -> dict[str, Any]:
     normalized = snapshot.normalized()
     return {
@@ -89,6 +93,15 @@ def validate_snapshot_payload(payload: object) -> None:
         metadata = item.get("metadata")
         if metadata is not None and not isinstance(metadata, dict):
             raise SnapshotError(f"edge at index {index} metadata must be an object")
+        for numeric_key in ("rate", "fee_bps", "liquidity"):
+            if (
+                numeric_key in item
+                and item[numeric_key] is not None
+                and not _is_number(item[numeric_key])
+            ):
+                raise SnapshotError(
+                    f"edge at index {index} {numeric_key} must be a number"
+                )
 
 
 def load_json_payload(path: str | Path) -> object:

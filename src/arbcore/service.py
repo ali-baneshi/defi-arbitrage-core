@@ -224,6 +224,10 @@ def _opportunity_from_dict(item: dict) -> Opportunity:
             raise RustServiceUnavailable(
                 f"Rust analyzer response field '{value_name}' must be finite"
             )
+    if abs(profit_bps - ((gross_return - 1.0) * 10_000.0)) > 1e-6:
+        raise RustServiceUnavailable(
+            "Rust analyzer response profit_bps is inconsistent with gross_return"
+        )
     if gross_return <= 0:
         raise RustServiceUnavailable("Rust analyzer response gross_return must be positive")
     if limiting_liquidity is not None and (
@@ -236,6 +240,19 @@ def _opportunity_from_dict(item: dict) -> Opportunity:
         raise RustServiceUnavailable(
             "Rust analyzer response estimated_capacity must be non-negative"
         )
+    capacity_known = item["capacity_known"]
+    if not isinstance(capacity_known, bool):
+        raise RustServiceUnavailable("Rust analyzer response capacity_known must be boolean")
+    snapshot_source = item["snapshot_source"]
+    if not isinstance(snapshot_source, str) or not snapshot_source.strip():
+        raise RustServiceUnavailable(
+            "Rust analyzer response snapshot_source must be a non-empty string"
+        )
+    snapshot_timestamp = item["snapshot_timestamp"]
+    if snapshot_timestamp is not None and not isinstance(snapshot_timestamp, str):
+        raise RustServiceUnavailable(
+            "Rust analyzer response snapshot_timestamp must be a string or null"
+        )
     return Opportunity(
         network=network,
         path=path,
@@ -244,4 +261,7 @@ def _opportunity_from_dict(item: dict) -> Opportunity:
         profit_bps=profit_bps,
         limiting_liquidity=limiting_liquidity,
         estimated_capacity=estimated_capacity,
+        capacity_known=capacity_known,
+        snapshot_source=snapshot_source.strip(),
+        snapshot_timestamp=snapshot_timestamp,
     )

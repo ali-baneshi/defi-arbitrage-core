@@ -31,7 +31,7 @@ class AnalysisEngine:
 
         opportunities: dict[tuple[str, ...], Opportunity] = {}
         for start in sorted(graph):
-            self._walk(start, start, graph, [], 1.0, snapshot.network, opportunities)
+            self._walk(start, start, graph, [], 1.0, snapshot, opportunities)
         ranked = sorted(opportunities.values(), key=lambda item: item.profit_bps, reverse=True)
         return ranked[: self.policy.max_results]
 
@@ -42,7 +42,7 @@ class AnalysisEngine:
         graph: dict[str, list[Edge]],
         route: list[Edge],
         gross_return: float,
-        network: str,
+        snapshot: MarketSnapshot,
         opportunities: dict[tuple[str, ...], Opportunity],
     ) -> None:
         if len(route) >= self.policy.max_hops:
@@ -54,7 +54,12 @@ class AnalysisEngine:
                 continue
             next_route = [*route, edge]
             if edge.target == start and len(next_route) >= 2:
-                opportunity = self._to_opportunity(network, start, next_route, next_return)
+                opportunity = self._to_opportunity(
+                    snapshot,
+                    start,
+                    next_route,
+                    next_return,
+                )
                 if not math.isfinite(opportunity.gross_return):
                     continue
                 if self._passes_policy(opportunity):
@@ -66,7 +71,7 @@ class AnalysisEngine:
             visited_assets = {hop.source for hop in next_route}
             if edge.target not in visited_assets:
                 self._walk(
-                    start, edge.target, graph, next_route, next_return, network, opportunities
+                    start, edge.target, graph, next_route, next_return, snapshot, opportunities
                 )
 
     def _passes_policy(self, opportunity: Opportunity) -> bool:
@@ -77,7 +82,7 @@ class AnalysisEngine:
 
     def _to_opportunity(
         self,
-        network: str,
+        snapshot: MarketSnapshot,
         start: str,
         route: Iterable[Edge],
         gross_return: float,
@@ -86,18 +91,34 @@ class AnalysisEngine:
         path = (start, *(edge.target for edge in route_tuple))
         liquidities = [edge.liquidity for edge in route_tuple if edge.liquidity is not None]
         limiting_liquidity = min(liquidities) if liquidities else None
+        # Each edge's liquidity is denominated in that edge's source asset.
+        # Convert each bound back into starting-asset units using the amount
+        # accumulated before that hop; taking the raw minimum would compare
+        # unrelated units such as USDC and WETH.
+        capacity_bounds: list[float] = []
+        prefix_return = 1.0
+        capacity_known = True
+        for edge in route_tuple:
+            if edge.liquidity is None:
+                capacity_known = False
+            elif prefix_return > 0 and math.isfinite(prefix_return):
+                capacity_bounds.append(edge.liquidity / prefix_return)
+            prefix_return *= edge.effective_rate()
         estimated_capacity = min(
             self.policy.max_notional,
-            limiting_liquidity if limiting_liquidity is not None else self.policy.max_notional,
+            min(capacity_bounds) if capacity_bounds else self.policy.max_notional,
         )
         return Opportunity(
-            network=network,
+            network=snapshot.network,
             path=path,
             venues=tuple(edge.venue for edge in route_tuple),
             gross_return=gross_return,
             profit_bps=(gross_return - 1.0) * 10_000.0,
             limiting_liquidity=limiting_liquidity,
             estimated_capacity=estimated_capacity,
+            capacity_known=capacity_known,
+            snapshot_source=snapshot.source,
+            snapshot_timestamp=snapshot.timestamp,
         )
 
     @staticmethod

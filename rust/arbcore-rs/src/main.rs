@@ -13,6 +13,8 @@ const MAX_METADATA_BYTES: usize = 1_048_576;
 const MAX_METADATA_KEYS: usize = 128;
 const MAX_METADATA_DEPTH: usize = 10;
 const MAX_EDGE_DEGREE: usize = 500;
+const MAX_SNAPSHOT_EDGES: usize = 10_000;
+const MAX_SNAPSHOT_BYTES: usize = 50 * 1024 * 1024;
 const MAX_TOTAL_METADATA_BYTES: usize = 10 * 1024 * 1024;
 
 #[derive(Debug, Clone, Deserialize)]
@@ -52,6 +54,9 @@ struct Opportunity {
     profit_bps: f64,
     limiting_liquidity: Option<f64>,
     estimated_capacity: f64,
+    capacity_known: bool,
+    snapshot_source: String,
+    snapshot_timestamp: Option<String>,
 }
 
 #[derive(Debug, Clone)]
@@ -93,6 +98,12 @@ fn run() -> Result<(), String> {
     validate_policy(&policy)?;
     let raw = fs::read_to_string(snapshot_path)
         .map_err(|_| format!("snapshot file does not exist or cannot be read: {snapshot_path}"))?;
+    if raw.len() > MAX_SNAPSHOT_BYTES {
+        return Err(format!(
+            "snapshot file too large: {} bytes (maximum {MAX_SNAPSHOT_BYTES} bytes)",
+            raw.len()
+        ));
+    }
     let snapshot: Snapshot = serde_json::from_str(&raw)
         .map_err(|_| format!("snapshot file is not valid JSON: {snapshot_path}"))?;
     let snapshot = normalize_snapshot(snapshot)?;
@@ -112,7 +123,19 @@ fn run() -> Result<(), String> {
     if edges.is_empty() {
         return Err("market snapshot must contain at least one edge".to_string());
     }
-    let opportunities = analyze(&snapshot.network, &edges, &policy)?;
+    if edges.len() > MAX_SNAPSHOT_EDGES {
+        return Err(format!(
+            "snapshot must contain at most {MAX_SNAPSHOT_EDGES} edges"
+        ));
+    }
+    let source = snapshot.source.clone().unwrap_or_else(|| "local".to_string());
+    let opportunities = analyze(
+        &snapshot.network,
+        &source,
+        snapshot.timestamp.as_deref(),
+        &edges,
+        &policy,
+    )?;
     let output = serde_json::to_string_pretty(&opportunities)
         .map_err(|_| "failed to serialize opportunities".to_string())?;
     println!("{output}");
@@ -177,6 +200,9 @@ fn validate_policy(policy: &Policy) -> Result<(), String> {
     }
     if !policy.max_notional.is_finite() || policy.max_notional <= 0.0 {
         return Err("max_notional must be a finite positive number".to_string());
+    }
+    if policy.max_notional < policy.min_liquidity {
+        return Err("max_notional must be at least min_liquidity".to_string());
     }
     if policy.max_results < 1 {
         return Err("max_results must be at least 1".to_string());
@@ -334,7 +360,13 @@ fn metadata_byte_len(value: &serde_json::Value) -> usize {
     serde_json::to_vec(value).map(|bytes| bytes.len()).unwrap_or(0)
 }
 
-fn analyze(network: &str, edges: &[Edge], policy: &Policy) -> Result<Vec<Opportunity>, String> {
+fn analyze(
+    network: &str,
+    source: &str,
+    timestamp: Option<&str>,
+    edges: &[Edge],
+    policy: &Policy,
+) -> Result<Vec<Opportunity>, String> {
     let mut graph: BTreeMap<String, Vec<Edge>> = BTreeMap::new();
     for edge in edges {
         if edge
@@ -359,6 +391,8 @@ fn analyze(network: &str, edges: &[Edge], policy: &Policy) -> Result<Vec<Opportu
     for start in graph.keys() {
         walk(
             network,
+            source,
+            timestamp,
             start,
             start,
             &graph,
@@ -380,6 +414,8 @@ fn analyze(network: &str, edges: &[Edge], policy: &Policy) -> Result<Vec<Opportu
 
 fn walk(
     network: &str,
+    source: &str,
+    timestamp: Option<&str>,
     start: &str,
     current: &str,
     graph: &BTreeMap<String, Vec<Edge>>,
@@ -402,7 +438,15 @@ fn walk(
             continue;
         }
         if edge.target == start && next_route.len() >= 2 {
-            let opportunity = to_opportunity(network, start, &next_route, next_return, policy);
+            let opportunity = to_opportunity(
+                network,
+                source,
+                timestamp,
+                start,
+                &next_route,
+                next_return,
+                policy,
+            );
             if !opportunity.gross_return.is_finite() {
                 continue;
             }
@@ -423,6 +467,8 @@ fn walk(
         if !visited.contains(&edge.target) {
             walk(
                 network,
+                source,
+                timestamp,
                 start,
                 &edge.target,
                 graph,
@@ -439,21 +485,38 @@ fn effective_rate(edge: &Edge) -> f64 {
     edge.rate * (1.0 - edge.fee_bps / 10_000.0)
 }
 
-fn to_opportunity(network: &str, start: &str, route: &[Edge], gross_return: f64, policy: &Policy) -> Opportunity {
+fn to_opportunity(
+    network: &str,
+    source: &str,
+    timestamp: Option<&str>,
+    start: &str,
+    route: &[Edge],
+    gross_return: f64,
+    policy: &Policy,
+) -> Opportunity {
     let mut path = vec![start.to_string()];
     let mut venues = Vec::new();
     let mut limiting_liquidity: Option<f64> = None;
+    let mut capacity_bounds = Vec::new();
+    let mut capacity_known = true;
+    let mut prefix_return: f64 = 1.0;
     for edge in route {
         path.push(edge.target.clone());
         venues.push(edge.venue.clone());
         if let Some(liquidity) = edge.liquidity {
             limiting_liquidity =
                 Some(limiting_liquidity.map_or(liquidity, |current| current.min(liquidity)));
+            if prefix_return.is_finite() && prefix_return > 0.0 {
+                capacity_bounds.push(liquidity / prefix_return);
+            }
+        } else {
+            capacity_known = false;
         }
+        prefix_return *= effective_rate(edge);
     }
     let estimated_capacity = policy
         .max_notional
-        .min(limiting_liquidity.unwrap_or(policy.max_notional));
+        .min(capacity_bounds.into_iter().fold(policy.max_notional, f64::min));
     Opportunity {
         network: network.to_string(),
         path,
@@ -462,6 +525,9 @@ fn to_opportunity(network: &str, start: &str, route: &[Edge], gross_return: f64,
         profit_bps: (gross_return - 1.0) * 10_000.0,
         limiting_liquidity,
         estimated_capacity,
+        capacity_known,
+        snapshot_source: source.to_string(),
+        snapshot_timestamp: timestamp.map(str::to_string),
     }
 }
 
@@ -552,7 +618,7 @@ mod tests {
             Edge { source: "B".to_string(), target: "C".to_string(), rate: 2.0, venue: "two".to_string(), fee_bps: 0.0, liquidity: Some(80.0), metadata: serde_json::json!({}) },
             Edge { source: "C".to_string(), target: "A".to_string(), rate: 0.26, venue: "three".to_string(), fee_bps: 0.0, liquidity: Some(60.0), metadata: serde_json::json!({}) },
         ];
-        let opportunities = analyze("polygon", &edges, &policy()).unwrap();
+        let opportunities = analyze("polygon", "test", None, &edges, &policy()).unwrap();
         assert_eq!(opportunities.len(), 1);
         assert_eq!(opportunities[0].network, "polygon");
         assert_eq!(opportunities[0].path, vec!["A", "B", "C", "A"]);

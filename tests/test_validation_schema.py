@@ -27,6 +27,13 @@ def test_rejects_unknown_edge_keys():
         validate_snapshot_payload({"edges": [{"source": "A", "target": "B", "rate": 1, "bad": 1}]})
 
 
+def test_rejects_string_numeric_values():
+    with pytest.raises(SnapshotError, match="rate must be a number"):
+        validate_snapshot_payload(
+            {"edges": [{"source": "A", "target": "B", "rate": "1.0"}]}
+        )
+
+
 def test_load_json_payload_rejects_invalid_json(tmp_path):
     path = tmp_path / "bad.json"
     path.write_text("{")

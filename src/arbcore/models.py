@@ -189,7 +189,15 @@ class RiskPolicy:
 
 @dataclass(frozen=True)
 class Opportunity:
-    """A discovered cycle after policy checks."""
+    """A discovered candidate cycle after policy checks.
+
+    ``estimated_capacity`` is expressed in the starting asset's units.  It is
+    only a linear quote-bound estimate; it is not executable size, AMM depth,
+    or a guarantee that the route can settle on-chain.
+
+    ``limiting_liquidity`` is retained as the smallest raw supplied edge value
+    for diagnostics only; those raw values may use different asset units.
+    """
 
     network: str
     path: tuple[str, ...]
@@ -198,6 +206,9 @@ class Opportunity:
     profit_bps: float
     limiting_liquidity: float | None
     estimated_capacity: float
+    capacity_known: bool
+    snapshot_source: str
+    snapshot_timestamp: str | None
 
     @property
     def is_profitable(self) -> bool:

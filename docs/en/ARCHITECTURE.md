@@ -40,9 +40,9 @@ schema + runtime validation
 2. Snapshot payloads and `Edge` objects are normalized and validated, including the explicit `network` label.
 3. `AnalysisEngine` builds a directed graph.
 4. The engine searches cycles up to `RiskPolicy.max_hops`.
-5. Profit is computed after edge fees.
-6. Policy gates filter by profit, liquidity, capacity, and result count.
-7. Opportunity output preserves the originating `network`.
+5. Nominal return is computed after edge fees using linear rates.
+6. Policy gates filter by nominal profit, supplied liquidity, converted capacity, and result count.
+7. Opportunity output preserves network, source, timestamp, and whether every hop supplied liquidity.
 8. A reporter renders text or JSON.
 
 ## Contract Data Flow
@@ -60,10 +60,11 @@ Schemas live in `schemas/` for snapshots, opportunities, contract manifests, and
 
 ## Multi-Network Boundary
 
-The core is now network-aware but still intentionally network-agnostic:
+The core is now network-labelled but still intentionally chain-agnostic:
 
 - Network identity is a required part of the operational data model.
 - The engine does not embed chain-specific execution logic.
+- Network labels are declarative metadata, not verified chain identity.
 - The package does not fetch RPC metadata, chain registries, gas prices, bridge paths, or token lists.
 - Larger systems can run the same core independently for Polygon, Ethereum, Arbitrum, Optimism, Base, Avalanche, BNB Chain, or private/local environments by changing the snapshot input, not the engine.
 
@@ -93,3 +94,7 @@ Normative components are `src/arbcore/`, `schemas/`, and validation scripts in `
 Python remains canonical. Rust must preserve the public snapshot and opportunity contracts for the supported process-boundary analyzer path. `scripts/validate_rust_service.py` builds the Rust binary, compares Python and Rust opportunity JSON for canonical positive and no-opportunity fixtures, and verifies fail-closed handling for invalid timestamp, invalid metadata, and unbounded policy cases.
 
 Rust parity validation is evidence for the optional analyzer boundary only; it does not make Rust the canonical orchestration layer and does not prove production trading readiness.
+
+## Economic Model Limitations
+
+The current engine is a bounded graph analyzer, not an execution simulator. Rates are linear scalar quotes and fees are percentage deductions. It does not calculate slippage, gas, latency, MEV, token decimals, price impact, or settlement risk. Liquidity is accepted in each edge's source-asset units and converted back to starting-asset units for a conservative linear capacity bound; missing liquidity is surfaced as `capacity_known: false`.

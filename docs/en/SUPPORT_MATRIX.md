@@ -7,7 +7,7 @@ This matrix is the compact maintainer view of supported, optional, and explicitl
 | Area | Status | Canonical source | Validation evidence |
 | --- | --- | --- | --- |
 | Python snapshot validation and analysis | Supported offline | `src/arbcore/` | `scripts/validate_all.py` |
-| Multi-network snapshot labeling | Supported offline | `src/arbcore/models.py`, `schemas/market_snapshot.schema.json`, `schemas/opportunity.schema.json` | `scripts/validate_schema_consistency.py`, `scripts/validate_output_contracts.py` |
+| Multi-network snapshot labeling | Supported offline; labels are not chain verification | `src/arbcore/models.py`, `schemas/market_snapshot.schema.json`, `schemas/opportunity.schema.json` | `scripts/validate_schema_consistency.py`, `scripts/validate_output_contracts.py` |
 | CLI JSON and text output | Supported offline | `src/arbcore/cli.py`, `src/arbcore/reporters.py` | `scripts/validate_output_contracts.py` |
 | Diagnostics/self-check JSON | Supported offline | `src/arbcore/diagnostics.py`, `schemas/diagnostics.schema.json` | `scripts/validate_output_contracts.py` |
 | Release readiness JSON | Supported offline status report | `scripts/release_readiness.py`, `schemas/release_readiness.schema.json` | `scripts/release_readiness.py --json` |

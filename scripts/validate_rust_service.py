@@ -60,7 +60,15 @@ def _check_valid_parity(snapshot: Path) -> list[str]:
         errors.append(f"Python/Rust opportunity count differs for {snapshot.name}")
         return errors
     for index, (left, right) in enumerate(zip(rust_payload, python_payload, strict=False)):
-        for key in ("network", "path", "venues", "limiting_liquidity"):
+        for key in (
+            "network",
+            "path",
+            "venues",
+            "limiting_liquidity",
+            "capacity_known",
+            "snapshot_source",
+            "snapshot_timestamp",
+        ):
             if left.get(key) != right.get(key):
                 errors.append(f"Python/Rust {key} differs for {snapshot.name} result {index}")
         for key in ("gross_return", "profit_bps", "estimated_capacity"):
