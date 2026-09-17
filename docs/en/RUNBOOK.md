@@ -63,6 +63,8 @@ PYTHONPATH=src python scripts/validate_all.py --include-rust
 - Confirm `.env` and `.env.*` are not tracked.
 - Run `./scripts/secret_scan.sh`.
 - Run `PYTHONPATH=src python scripts/audit_git_history.py`.
+- Run `PYTHONPATH=src python scripts/audit_public_remote.py`; public GitHub SSH
+  remotes are automatically retried over HTTPS when the local SSH key is absent.
 - Review `contracts/` for real addresses, RPC URLs, deployment claims, unsafe primitives, or missing `NOT AUDITED` notices.
 - Review `schemas/` after changing public JSON contracts.
 - Confirm docs do not claim production readiness.
@@ -72,12 +74,14 @@ PYTHONPATH=src python scripts/validate_all.py --include-rust
 
 1. Rotate every credential that may have existed in previous local history.
 2. Ensure old `.git` backups are not inside any publication path.
-3. Run `PYTHONPATH=src python scripts/validate_all.py`.
-4. Run `pytest` and `ruff check .` only where already available or in CI.
-5. Run `cargo test --manifest-path rust/arbcore-rs/Cargo.toml` if claiming Rust support.
-6. Run an independent history scanner outside this dependency-free baseline.
-7. Review `README.md`, `SECURITY.md`, `RELEASE.md`, and contract docs for accurate maturity claims.
-8. Tag only as an alpha/offline MVP until independent security and operational reviews are complete.
+3. Run `PYTHONPATH=src python scripts/audit_public_remote.py` from a clean
+   environment; retain the advertised-ref scan output.
+4. Run `PYTHONPATH=src python scripts/validate_all.py`.
+5. Run `pytest` and `ruff check .` only where already available or in CI.
+6. Run `cargo test --manifest-path rust/arbcore-rs/Cargo.toml` if claiming Rust support.
+7. Run an independent history scanner outside this dependency-free baseline.
+8. Review `README.md`, `SECURITY.md`, `RELEASE.md`, and contract docs for accurate maturity claims.
+9. Run `PYTHONPATH=src python scripts/verify_public_snapshot.py` after committing the hardening changes; it never creates a tag.
 
 ## Release-Day Quick Path
 

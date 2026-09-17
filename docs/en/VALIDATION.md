@@ -28,6 +28,14 @@ This runs:
 9. Release readiness report that separates local validation from public release gates.
 10. Active-tree secret scan.
 
+For an authenticated remote review, run `PYTHONPATH=src python scripts/audit_public_remote.py`.
+It clones the advertised public refs into a temporary mirror and scans them, but
+does not prove that server-side unreachable objects were removed.
+
+After the hardening changes are committed, `PYTHONPATH=src python scripts/verify_public_snapshot.py`
+runs the full validation guard for the current public snapshot. It never creates
+a tag, pushes, or rewrites the public branch.
+
 Use this when `pytest`, `ruff`, or other optional tools are unavailable.
 
 ## Machine-Readable Workflows

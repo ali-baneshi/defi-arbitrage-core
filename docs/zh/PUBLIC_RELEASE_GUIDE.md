@@ -21,19 +21,19 @@
 - `developer-tools`
 - `infrastructure`
 
-## 首个公开版本的定位
+## 当前 public snapshot 定位
 
-首个公开版本应被定位为 alpha offline MVP。最专业的叙事不是把它包装成 trading bot，而是把它描述为一个确定性、validation-first、具有明确 trust boundary 和清晰扩展点的 DeFi 分析内核。
+当前 public snapshot 应被定位为 alpha offline MVP。最专业的叙事不是把它包装成 trading bot，而是把它描述为一个确定性、validation-first、具有明确 trust boundary 和清晰扩展点的 DeFi 分析内核。
 
 ## 推荐的 Release Notes 结构
 
 ### 标题
 
-`defi-arbitrage-core v0.1.0-alpha`
+`defi-arbitrage-core — public alpha snapshot`
 
 ### 开场说明
 
-这是 `defi-arbitrage-core` 的首个公开版本：一个面向本地 DeFi 市场 snapshot 的可复用离线分析核心。项目重点在于确定性 validation、有界循环分析、多网络可移植性、稳定 JSON 契约，以及分析层与执行层之间的清晰分离。
+这是 `defi-arbitrage-core` 当前 public snapshot：一个面向本地 DeFi 市场 snapshot 的可复用离线分析核心。项目重点在于确定性 validation、有界循环分析、多网络可移植性、稳定 JSON 契约，以及分析层与执行层之间的清晰分离。
 
 ### 亮点
 
@@ -58,7 +58,7 @@
 - 独立 history scan 的结果
 - 关于 credential rotation 与旧历史排除的 maintainer 证明
 
-## 在将仓库设为公开之前
+## 在将当前 snapshot 标记为 release-ready 之前
 
 请在实践中确认以下事项，而不是只写在文档里：
 

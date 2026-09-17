@@ -6,4 +6,4 @@
 - [ ] 固定 dependency 并强化 CI
 - [ ] 完整刷新并 review Persian 与 Chinese 文档
 - [ ] 生成 checksums、SBOM 与 release evidence
-- [ ] 发布 signed tag `v0.1.0-alpha`
+- [ ] 使用 `verify_public_snapshot.py` 验证当前 public snapshot；不要创建新 tag。

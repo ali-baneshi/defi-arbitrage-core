@@ -6,4 +6,4 @@
 - [ ] تثبیت dependency و CI
 - [ ] refresh و review کامل docs فارسی و چینی
 - [ ] تولید checksums، SBOM و release evidence
-- [ ] انتشار signed tag `v0.1.0-alpha`
+- [ ] تأیید snapshot عمومی فعلی با `verify_public_snapshot.py`؛ tag جدید نسازید.

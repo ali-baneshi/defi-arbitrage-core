@@ -13,3 +13,7 @@ example را منتشر می‌کند؛ این فایل عمداً gateها را
 
 فایل شواهد نباید secret، token، private key یا مسیر خصوصی سیستم را شامل شود.
 نسخه انگلیسی منبع canonical برای release است.
+
+مخزن GitHub اکنون public است؛ اما `public_release_ready` فقط به معنی تأیید
+انتشار signed alpha بعد از تکمیل gateهاست و visibility مخزن را توصیف نمی‌کند.
+شواهد باید به release commit مشخص متصل باشد و گزارش scan مستقل checksum داشته باشد.

@@ -46,17 +46,19 @@ PYTHONPATH=src python scripts/validate_rust_service.py
 - [ ] Confirm generated files such as `*.egg-info/`, caches, logs, databases, and build outputs are not tracked.
 - [ ] Confirm Persian and Chinese docs either mirror current behavior or clearly defer to English docs for latest release-critical details.
 
-## Suggested Publication Order
+## Current Public Snapshot Workflow
 
-1. Finish active-tree and history cleanup tasks
-2. Run validation and capture evidence
+1. Finish active-tree and history review tasks
+2. Run validation and capture evidence for the current public snapshot
 3. Review README, SECURITY, and docs landing pages
 4. Confirm translation scope in `docs/TRANSLATION_STATUS.md`
-5. Tag and publish the first public alpha release
+5. Publish the evidence and status update without rewriting `main`
 
-## Recommended First Public Version
+## Current Version Identity
 
-Use `0.1.0-alpha` for the first public alpha MVP release after history cleanup, credential rotation, localization review, validation, and independent review.
+Keep the current package identity `0.1.0a1` unchanged. Any existing `v1.0.0`
+tag is historical and must not be moved or deleted. This preparation creates no
+new tag and does not rewrite or force-push the public `main` branch.
 
 ## No-Dependency Release Gate
 

@@ -1,33 +1,23 @@
 # Quick Start Guide
 
-## 🚀 Create New Repository in One Command
+## 🚀 Verify the Current Public Snapshot
 
 ```bash
-bash CREATE_NEW_REPO.sh
+PYTHONPATH=src python scripts/validate_all.py --include-rust
+PYTHONPATH=src python scripts/audit_public_remote.py
+PYTHONPATH=src python scripts/release_readiness.py --json
 ```
 
-That's it! This single command will:
-- ✅ Check prerequisites
-- ✅ Copy all project files
-- ✅ Initialize fresh git repository
-- ✅ Create GitHub repository (if gh CLI available)
-- ✅ Configure topics and settings
-- ✅ Prepare the v0.1.0-alpha release tag
+This verifies the current public code without creating a replacement repository,
+new tag, or rewritten history.
 
 ## 📍 What You Get
 
-A new private repository at:
-```
-~/Documents/Google-antigravity/defi-arbitrage-core
-```
-
-With:
-- Clean git history (only one commit)
-- All documentation in 3 languages (English, Persian, Chinese)
-- Complete source code and examples
-- Validation scripts and tests
-- Docker support
-- Professional README with use cases
+The canonical repository is already public and contains:
+- The current alpha offline analysis core
+- Source code, examples, schemas, tests, and validation scripts
+- English, Persian, and Chinese documentation
+- Optional Rust validation and reproducible packaging tools
 
 ## 🔍 Verify Everything Works
 
@@ -41,13 +31,13 @@ PYTHONPATH=src python scripts/validate_all.py
 - **Main README**: `README.md` - Overview and use cases
 - **Setup Guide**: `REPOSITORY_SETUP_GUIDE.md` - Detailed instructions
 - **Advanced Docs**: `docs/en/ADVANCED_README.md` - Technical deep dive
-- **Completion Summary**: `COMPLETION_SUMMARY.md` - What was done
+- **Completion Summary**: `COMPLETION_SUMMARY.md` - Historical work record
 
-## 🌐 Make It Public (When Ready)
+## 🌐 Current Public Status
 
 ```bash
 cd ~/Documents/Google-antigravity/defi-arbitrage-core
-gh repo edit --visibility public
+PYTHONPATH=src python scripts/release_readiness.py --json
 ```
 
 ## ❓ Need Help?
@@ -64,9 +54,9 @@ This repository now includes:
 - **8+ Use Case Categories**: Clear guidance for different user types
 - **Deep Technical Documentation**: 433 lines of advanced architecture docs
 - **Multi-Language Support**: Complete docs in English, Persian, Chinese
-- **One-Command Setup**: Automated repository creation
-- **Professional Quality**: Ready for public release
+- **Legacy tooling**: Separate-copy automation is retained but disabled by default
+- **Professional Quality**: Ready for public review; release gates still apply
 
 ---
 
-**Ready?** Run: `bash CREATE_NEW_REPO.sh`
+**Ready?** Run the three verification commands above.

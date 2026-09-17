@@ -19,5 +19,7 @@
 ## hygiene
 
 - 不要提交 secret、token、wallet data 或 credential
+- public 分支已按 alpha 范围清理，但本地 clone 仍可能保留历史 unreachable objects
 - 公开发布前请执行独立的 history scan
+- 可使用 `PYTHONPATH=src python scripts/audit_public_remote.py` 扫描 public remote 的 advertised refs；它不能替代独立扫描
 - 使用 `PYTHONPATH=src python scripts/release_readiness.py --json` 作为最终 gate

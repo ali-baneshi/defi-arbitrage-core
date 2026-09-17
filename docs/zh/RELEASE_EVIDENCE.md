@@ -12,3 +12,7 @@ canonical evidence 文件为 `release/release-evidence.json`，并必须符合
 - 完整刷新 Persian 与 Chinese 文档镜像。
 
 证据文件不得包含 secret、token、private key 或本地私有路径。英文文档是 release 的 canonical source。
+
+GitHub 仓库目前已经是 public；但 `public_release_ready` 只表示 signed alpha
+release 已经通过 gate，不表示仓库 visibility。证据必须绑定到明确的 release
+commit，并保存独立扫描报告的 checksum。

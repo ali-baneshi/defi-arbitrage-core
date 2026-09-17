@@ -266,6 +266,10 @@ def check_release_identity() -> list[str]:
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
     if "defi-arbitrage-core-public-mvp" in readme:
         errors.append("README contains stale public-mvp repository URL")
+    if "NOT YET PUBLICLY RELEASED" in readme:
+        errors.append("README incorrectly claims that the public repository is not public")
+    if "PUBLIC ALPHA" not in readme or "public_release_ready" not in readme:
+        errors.append("README must distinguish public visibility from release readiness")
     return errors
 
 

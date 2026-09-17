@@ -1,10 +1,10 @@
-> **⚠ ALPHA — NOT YET PUBLICLY RELEASED.** This repository is undergoing security hardening. Do not use in production. See [SECURITY.md](SECURITY.md) for release gates. Run `PYTHONPATH=src python scripts/release_readiness.py` to check current status.
+> **PUBLIC ALPHA SNAPSHOT — RELEASE GATED.** This repository is already public, but this current version remains gated by security, history, and documentation evidence; `public_release_ready` is not yet true. Do not use in production. See [SECURITY.md](SECURITY.md) and run `PYTHONPATH=src python scripts/release_readiness.py` to check current status.
 
 # defi-arbitrage-core
 
 [![CI](https://github.com/ali-baneshi/defi-arbitrage-core/actions/workflows/ci.yml/badge.svg)](https://github.com/ali-baneshi/defi-arbitrage-core/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-![Python](https://img.shields.io/badge/Python-3.11%2B-blue.svg)
+![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)
 ![Rust](https://img.shields.io/badge/Rust-1.75%2B-orange.svg)
 ![Shell](https://img.shields.io/badge/Shell-Bash-4EAA25.svg)
 ![Solidity](https://img.shields.io/badge/Solidity-smart--contracts-363636.svg)
@@ -182,7 +182,7 @@ PYTHONPATH=src python scripts/release_readiness.py --json
 
 ## Open-Source Readiness And Hardening
 
-Before public release, treat this checklist as required:
+Before treating the current public snapshot as fully release-ready, treat this checklist as required:
 
 - Reproducibility: pin and audit dependency versions in CI and container builds.
 - Security: enforce secret scanning, dependency scanning, and signed release artifacts.

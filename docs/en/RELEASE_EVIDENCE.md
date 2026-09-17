@@ -7,6 +7,11 @@ against `schemas/release_evidence.schema.json`. The repository intentionally shi
 only `release/release-evidence.example.json`; maintainers must create the real
 attestation after completing the external security and history work.
 
+The GitHub repository is already public. In this document, `public_release_ready`
+means that the current public snapshot has passed its release evidence gates; it
+does not describe the repository visibility setting. The current package identity
+is `0.1.0a1`; this workflow creates no new tag and does not rewrite public `main`.
+
 ## Readiness State Model
 
 - `local_validation_ready`: deterministic in-repository checks passed in the active tree.

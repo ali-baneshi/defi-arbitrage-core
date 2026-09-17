@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import argparse
 import re
 import subprocess
 import sys
@@ -20,14 +21,24 @@ ASSIGNMENT = re.compile(
 )
 
 
-def main() -> int:
-    if not _inside_git_repo():
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--repo",
+        type=Path,
+        default=ROOT,
+        help="Git repository to scan (defaults to this repository)",
+    )
+    args = parser.parse_args(argv)
+    repo = args.repo.resolve()
+
+    if not _inside_git_repo(repo):
         print("not inside a Git repository", file=sys.stderr)
         return 2
-    objects = _object_ids()
+    objects = _object_ids(repo)
     findings = [
         object_id
-        for object_id, content in _blob_contents(objects)
+        for object_id, content in _blob_contents(repo, objects)
         if HIGH_CONFIDENCE.search(content) or ASSIGNMENT.search(content)
     ]
     if findings:
@@ -39,21 +50,30 @@ def main() -> int:
     return 0
 
 
-def _inside_git_repo() -> bool:
-    result = subprocess.run(
+def _inside_git_repo(repo: Path) -> bool:
+    worktree = subprocess.run(
         ["git", "rev-parse", "--is-inside-work-tree"],
-        cwd=ROOT,
+        cwd=repo,
         text=True,
         capture_output=True,
         check=False,
     )
-    return result.returncode == 0 and result.stdout.strip() == "true"
+    if worktree.returncode == 0 and worktree.stdout.strip() == "true":
+        return True
+    bare = subprocess.run(
+        ["git", "rev-parse", "--is-bare-repository"],
+        cwd=repo,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    return bare.returncode == 0 and bare.stdout.strip() == "true"
 
 
-def _object_ids() -> set[str]:
+def _object_ids(repo: Path) -> set[str]:
     ids: set[str] = set()
     reachable = subprocess.check_output(
-        ["git", "rev-list", "--objects", "--all", "--reflog"], cwd=ROOT, text=True
+        ["git", "rev-list", "--objects", "--all", "--reflog"], cwd=repo, text=True
     )
     for line in reachable.splitlines():
         object_id = line.split(maxsplit=1)[0]
@@ -61,7 +81,7 @@ def _object_ids() -> set[str]:
             ids.add(object_id)
     fsck = subprocess.check_output(
         ["git", "fsck", "--full", "--no-reflogs", "--unreachable"],
-        cwd=ROOT,
+        cwd=repo,
         text=True,
         stderr=subprocess.DEVNULL,
     )
@@ -72,10 +92,10 @@ def _object_ids() -> set[str]:
     return ids
 
 
-def _blob_contents(object_ids: set[str]):
+def _blob_contents(repo: Path, object_ids: set[str]):
     process = subprocess.Popen(
         ["git", "cat-file", "--batch"],
-        cwd=ROOT,
+        cwd=repo,
         stdin=subprocess.PIPE,
         stdout=subprocess.PIPE,
     )

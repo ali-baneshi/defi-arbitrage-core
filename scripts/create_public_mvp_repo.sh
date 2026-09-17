@@ -1,5 +1,14 @@
 #!/usr/bin/env bash
+# Legacy clean-copy utility. It is not part of the current public-snapshot
+# workflow; use scripts/verify_public_snapshot.py for this repository.
 set -euo pipefail
+
+if [[ "${ALLOW_LEGACY_REPO_COPY:-}" != "1" ]]; then
+  echo "This legacy utility creates a separate repository copy and is disabled by default." >&2
+  echo "Use scripts/verify_public_snapshot.py and RELEASE.md for the current public snapshot." >&2
+  echo "To intentionally create an archival copy, set ALLOW_LEGACY_REPO_COPY=1." >&2
+  exit 2
+fi
 
 SRC_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 DEST_DIR="${1:-${SRC_DIR%/*}/defi-arbitrage-core-release-candidate}"

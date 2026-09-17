@@ -1,6 +1,7 @@
 # Open Source Hardening Task List
 
-Use this checklist to create GitHub issues and track release readiness work.
+Use this checklist to create GitHub issues and track hardening of the current
+public snapshot. It is not a plan for creating a replacement repository.
 
 ## P0 - Stabilization
 
@@ -14,7 +15,7 @@ Use this checklist to create GitHub issues and track release readiness work.
 - [ ] CI: enforce `pip-audit --strict` on pull requests.
 - [ ] CI: enforce secret scanning for full repository history in pull requests.
 - [ ] Policy: define dependency update cadence and ownership.
-- [ ] Release: publish artifact checksums and signed tags.
+- [ ] Release: archive current-snapshot artifact checksums; do not create a new tag for this workflow.
 - [x] Release tooling: build wheel/sdist artifacts and SHA-256 checksums.
 
 ## P1 - Determinism and Contracts

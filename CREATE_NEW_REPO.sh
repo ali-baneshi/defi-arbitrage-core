@@ -1,12 +1,22 @@
 #!/usr/bin/env bash
-# One-command repository creation script
+# Legacy one-command repository creation script.
+# It is not part of the current public-snapshot workflow.
 # Usage: bash CREATE_NEW_REPO.sh
 
 set -e
 
+if [ "${ALLOW_LEGACY_REPO_COPY:-}" != "1" ]; then
+    echo "This is a legacy clean-copy utility and is not the current public-snapshot workflow."
+    echo "Use scripts/verify_public_snapshot.py and RELEASE.md for the current repository."
+    echo "To intentionally create a separate archival copy, set ALLOW_LEGACY_REPO_COPY=1."
+    exit 2
+fi
+
 echo "╔════════════════════════════════════════════════════════════════╗"
 echo "║  DeFi Arbitrage Core - New Repository Creation                ║"
 echo "╚════════════════════════════════════════════════════════════════╝"
+echo ""
+echo "WARNING: this is a legacy clean-copy utility; current work belongs in this public repository."
 echo ""
 
 # Check prerequisites

@@ -6,7 +6,7 @@ The repository is an offline analysis core. It excludes private-key handling, si
 
 ## Git History Status
 
-The active tree is sanitized, but previous local history contained sensitive material. Treat any historical credentials as compromised, rotate them, and do not publish old `.git` backups.
+The active public branch is sanitized for the intended alpha scope, but previous local history contained sensitive material and this clone may still have unreachable Git objects. Treat any historical credentials as compromised, rotate them, independently scan the full history, and do not publish old `.git` backups.
 
 ## Safe Defaults
 
@@ -32,6 +32,11 @@ The secret scan is lightweight active-tree scanning and does not replace indepen
 `PYTHONPATH=src python scripts/audit_git_history.py` additionally scans reachable,
 reflog, and unreachable Git blobs. It is useful local evidence but does not
 replace an independent scanner operated outside this repository.
+
+`PYTHONPATH=src python scripts/audit_public_remote.py` creates a temporary mirror
+clone and scans the refs currently advertised by the public remote. It does not
+prove that server-side unreachable objects have been garbage-collected and does
+not replace an independent history scanner.
 
 ## Reporting Vulnerabilities
 

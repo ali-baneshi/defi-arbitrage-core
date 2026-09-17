@@ -1,6 +1,8 @@
 # 项目状态
 
 - 成熟度：alpha offline MVP
+- 仓库 visibility：public。
+- release 状态：仍受 gate 约束；public visibility 不等于 `public_release_ready`。
 - 支持本地 snapshot 分析与确定性 validation。
 - Rust analyzer 是可选组件，Python 仍是 canonical 实现。
 - 不支持 live RPC、wallet、signing、broadcast、execution 或 deployment。

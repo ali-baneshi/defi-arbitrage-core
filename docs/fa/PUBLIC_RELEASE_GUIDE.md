@@ -21,19 +21,19 @@
 - `developer-tools`
 - `infrastructure`
 
-## جایگاه اولین انتشار عمومی
+## جایگاه snapshot عمومی فعلی
 
-اولین انتشار عمومی باید به‌عنوان alpha offline MVP معرفی شود. حرفه‌ای‌ترین روایت این نیست که repository یک trading bot است؛ بلکه این است که یک هسته تحلیل دیفایِ قطعی، validation-first و دارای trust boundaryهای روشن و extension pointهای شفاف است.
+این snapshot عمومی فعلی باید به‌عنوان alpha offline MVP معرفی شود. حرفه‌ای‌ترین روایت این نیست که repository یک trading bot است؛ بلکه این است که یک هسته تحلیل دیفایِ قطعی، validation-first و دارای trust boundaryهای روشن و extension pointهای شفاف است.
 
 ## ساختار پیشنهادی release note
 
 ### عنوان
 
-`defi-arbitrage-core v0.1.0-alpha`
+`defi-arbitrage-core — public alpha snapshot`
 
 ### افتتاحیه
 
-این اولین انتشار عمومی `defi-arbitrage-core` را معرفی می‌کند؛ یک هسته reusable برای تحلیل آفلاین snapshotهای محلی بازار دیفای. تمرکز پروژه روی validation قطعی، تحلیل چرخه محدود، portability چندشبکه‌ای، قراردادهای JSON پایدار و جداسازی روشن بین analysis و execution است.
+این snapshot عمومی فعلی `defi-arbitrage-core` را ارائه می‌کند؛ یک هسته reusable برای تحلیل آفلاین snapshotهای محلی بازار دیفای. تمرکز پروژه روی validation قطعی، تحلیل چرخه محدود، portability چندشبکه‌ای، قراردادهای JSON پایدار و جداسازی روشن بین analysis و execution است.
 
 ### نکات برجسته
 
@@ -58,7 +58,7 @@
 - نتیجه history scan مستقل
 - attestation نگه‌دارنده برای credential rotation و حذف history قدیمی از مسیر انتشار
 
-## قبل از public کردن repository
+## قبل از release-ready دانستن snapshot فعلی
 
 این موارد را در عمل تأیید کنید، نه فقط در متن:
 

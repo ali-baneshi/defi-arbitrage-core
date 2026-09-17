@@ -1,6 +1,8 @@
 # وضعیت پروژه
 
 - بلوغ: alpha offline MVP
+- visibility مخزن: public است.
+- وضعیت release: هنوز gated است؛ public بودن به معنی `public_release_ready` نیست.
 - تحلیل snapshot محلی و validation قطعی پشتیبانی می‌شود.
 - Rust analyzer اختیاری است و Python مرجع canonical باقی می‌ماند.
 - live RPC، wallet، signing، broadcast، execution و deployment پشتیبانی نمی‌شود.

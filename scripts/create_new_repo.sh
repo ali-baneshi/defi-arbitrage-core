@@ -1,10 +1,18 @@
 #!/usr/bin/env bash
-# Create a new private repository copy for initial MVP release
+# Legacy utility for creating a separate repository copy. It is not the
+# workflow for hardening the current public repository.
 
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+
+if [ "${ALLOW_LEGACY_REPO_COPY:-}" != "1" ]; then
+    echo "This is a legacy clean-copy utility and is not the current public-snapshot workflow."
+    echo "Use scripts/verify_public_snapshot.py and RELEASE.md for the current repository."
+    echo "To intentionally create a separate archival copy, set ALLOW_LEGACY_REPO_COPY=1."
+    exit 2
+fi
 
 # Configuration (can be overridden by environment variables)
 NEW_REPO_NAME="${NEW_REPO_NAME:-defi-arbitrage-core}"
@@ -19,6 +27,11 @@ echo "Source: ${PROJECT_ROOT}"
 echo "Target: ${NEW_REPO_PATH}"
 echo "GitHub: ${GITHUB_USERNAME}/${NEW_REPO_NAME}"
 echo ""
+
+if [ "${NEW_REPO_PATH}" = "${PROJECT_ROOT}" ]; then
+    echo "Error: legacy copy destination must not be the current repository."
+    exit 2
+fi
 
 # Check if target directory already exists
 if [ -d "${NEW_REPO_PATH}" ]; then

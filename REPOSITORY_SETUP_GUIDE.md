@@ -1,6 +1,66 @@
 # Repository Setup Guide
 
-This guide explains how to create a clean repository copy for the `0.1.0-alpha` release. Public visibility remains gated by the release evidence workflow.
+The current repository is already the public snapshot being prepared. Keep this
+repository, its `main` branch, and package identity `0.1.0a1`. This guide does
+not authorize a replacement repository, a history rewrite, a force-push, or a
+new release tag.
+
+## Current Workflow
+
+Run these commands from this repository:
+
+```bash
+PYTHONPATH=src python scripts/audit_public_remote.py
+PYTHONPATH=src python scripts/validate_all.py --include-rust
+PYTHONPATH=src python scripts/release_readiness.py --json
+```
+
+The first command scans the refs currently advertised by the configured public
+remote in a temporary mirror. It cannot prove that server-side unreachable
+objects are gone, so an independent full-history scan and maintainer attestations
+remain required. The readiness report intentionally stays false until the
+external gates are evidenced in `release/release-evidence.json`.
+
+After the hardening change is committed and the working tree is clean, use:
+
+```bash
+PYTHONPATH=src python scripts/verify_public_snapshot.py
+```
+
+This is a non-mutating guard for the same public snapshot. It checks the package
+identity and validation state; it never creates a tag, pushes, or rewrites Git
+history.
+
+## Current Version and Git Policy
+
+- Package version: `0.1.0a1` (human-facing alpha label: `0.1.0-alpha`).
+- Existing historical tags remain untouched.
+- Work lands as an ordinary commit on `main` when the maintainer is ready.
+- Do not create or move a tag for this preparation task.
+
+## External Gates Still Owned by the Maintainer
+
+- Rotate any credential that may have appeared in older local history.
+- Confirm old repositories, `.git` backups, and archive paths are outside every
+  publication path.
+- Run an independent full-history scanner and retain its report checksum.
+- Review Persian and Chinese docs, or explicitly scope English as canonical in
+  release notes.
+- Create the real non-secret `release/release-evidence.json` only from verified
+  facts; never copy the blocked example as if it were an attestation.
+
+## Legacy Clean-Copy Utility
+
+The commands below are retained only for a separately authorized archival copy.
+They are not part of preparing this public repository. Do not run them with the
+current repository as the destination:
+
+```bash
+ALLOW_LEGACY_REPO_COPY=1 bash scripts/create_new_repo.sh
+```
+
+That utility creates a fresh repository and is intentionally outside the current
+workflow. Its historical instructions are preserved below for reference only.
 
 ## Prerequisites
 
@@ -10,32 +70,34 @@ This guide explains how to create a clean repository copy for the `0.1.0-alpha` 
    - Install: `brew install gh` (macOS) or see https://cli.github.com/
    - Login: `gh auth login`
 
-## Quick Start
+## Legacy Quick Start (Reference Only)
 
-Run the automated script from the project root:
+Run the automated script only when a separate clean copy has been explicitly
+requested:
 
 ```bash
-bash scripts/create_new_repo.sh
+ALLOW_LEGACY_REPO_COPY=1 bash scripts/create_new_repo.sh
 ```
 
-This will:
-1. Create a new directory at `~/Documents/Google-antigravity/defi-arbitrage-core`
+If used for a separate legacy copy, this will:
+1. Create a new directory at a separately configured destination
 2. Copy all project files (excluding .git, build artifacts, and temporary files)
 3. Initialize a fresh git repository with clean history
 4. Create an initial commit with comprehensive release notes
 5. Create a private GitHub repository (if `gh` CLI is available)
 6. Add repository topics for discoverability
-7. Prepare a v0.1.0-alpha release tag
+7. Run validation for that separate copy
 
-## Manual Steps (if gh CLI is not available)
+## Legacy Manual Steps (Reference Only)
 
 If you don't have GitHub CLI installed, follow these steps after running the script:
 
 ### 1. Create Repository on GitHub
 
-Go to https://github.com/new and create a new **private** repository:
-- Repository name: `defi-arbitrage-core`
-- Description: `DeFi arbitrage analysis infrastructure - public alpha v0.1.0-alpha`
+Go to https://github.com/new and create a separate **private** repository only
+if you intentionally need a legacy copy:
+- Repository name: choose a distinct name; do not reuse the current public repository
+- Description: `DeFi arbitrage analysis infrastructure - legacy copy`
 - Visibility: **Private**
 - Do NOT initialize with README, .gitignore, or license (we already have these)
 
@@ -46,7 +108,6 @@ cd ~/Documents/Google-antigravity/defi-arbitrage-core
 git remote add origin https://github.com/ali-baneshi/defi-arbitrage-core.git
 git branch -M main
 git push -u origin main
-git push origin v0.1.0-alpha
 ```
 
 ### 3. Configure Repository Settings
@@ -100,7 +161,8 @@ Should show the clean alpha release commit.
 git tag -l
 ```
 
-Should show: `v0.1.0-alpha` after release gates are satisfied.
+Do not expect a new tag from this workflow; the current public snapshot is
+validated through `scripts/verify_public_snapshot.py`.
 
 ### 4. Run Validation Suite
 
@@ -117,23 +179,6 @@ git remote -v
 ```
 
 Should show your new repository URL.
-
-## Making the Repository Public
-
-**IMPORTANT**: Only make the repository public after:
-1. Reviewing all files for sensitive information
-2. Confirming no credentials or API keys are present
-3. Verifying documentation is complete and accurate
-4. Running the full validation suite
-
-To make public:
-
-```bash
-cd ~/Documents/Google-antigravity/defi-arbitrage-core
-gh repo edit --visibility public
-```
-
-Or manually on GitHub: Settings → Danger Zone → Change repository visibility → Make public
 
 ## Customization
 
@@ -194,7 +239,7 @@ The script automatically excludes:
 - `.env` - Environment variables (should use .env.example)
 - `node_modules/` - Node.js dependencies
 
-## Post-Creation Checklist
+## Legacy Post-Creation Checklist
 
 After creating the new repository:
 
@@ -208,18 +253,20 @@ After creating the new repository:
 - [ ] Push to GitHub
 - [ ] Add repository topics
 - [ ] Configure repository settings
-- [ ] Create GitHub release from the signed v0.1.0-alpha tag
+- [ ] Archive the completed current-snapshot evidence
 - [ ] Update repository description
-- [ ] Consider making public (when ready)
+- [ ] Keep the current repository public; do not create a new release tag as part of this workflow
 
-## Creating a GitHub Release
+## Legacy GitHub Release Reference
 
-After pushing the tag, create a release on GitHub:
+The current-snapshot workflow does not create or push a new tag. If a separate
+legacy copy is intentionally maintained, manage its release independently:
 
 1. Go to your repository on GitHub
 2. Click "Releases" → "Create a new release"
-3. Choose tag: `v0.1.0-alpha`
-4. Release title: `Public Alpha Release v0.1.0-alpha`
+3. Do not apply these steps to the current public repository
+4. Do not apply these steps to the current public repository; complete its
+   external evidence gates instead
 5. Description: Use the content from the tag message
 6. Mark as "pre-release" if still in alpha
 7. Publish release

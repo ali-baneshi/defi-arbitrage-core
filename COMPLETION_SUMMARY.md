@@ -1,9 +1,11 @@
 # Historical Project Completion Summary
 
 This document records earlier documentation and automation work. It is
-superseded for release decisions by `RELEASE.md`, `docs/en/RELEASE_EVIDENCE.md`,
-and `release/release-evidence.example.json`. The intended release identity is
-`0.1.0-alpha`; public release is not approved until the manual gates pass.
+historical and non-operational. Release decisions are superseded by
+`RELEASE.md`, `docs/en/RELEASE_EVIDENCE.md`, and
+`release/release-evidence.example.json`. The current public snapshot remains
+an alpha (`0.1.0a1`) and is not production-ready; public-release readiness is
+controlled by verified manual gates.
 
 ## ✅ Completed Tasks
 
@@ -110,15 +112,16 @@ Advanced documentation now covers:
 
 ## 🚀 How to Use
 
-### Create New Repository
+### Historical Repository-Copy Automation (Not the Current Workflow)
 
-Simply run from the project root:
+The old clean-copy automation is retained only for a separately authorized
+archival copy. It must not be used to prepare this public repository:
 
 ```bash
-bash CREATE_NEW_REPO.sh
+ALLOW_LEGACY_REPO_COPY=1 bash CREATE_NEW_REPO.sh
 ```
 
-This will:
+Historically, this would:
 1. Check prerequisites (git, rsync, gh CLI)
 2. Create new repository at `~/Documents/Google-antigravity/defi-arbitrage-core`
 3. Copy all files with smart exclusions
@@ -126,7 +129,7 @@ This will:
 5. Create initial commit with comprehensive release notes
 6. Create GitHub repository (if gh CLI available)
 7. Configure repository topics
-8. Prepare the v0.1.0-alpha release tag
+8. Verify the current public snapshot; do not create a new tag
 9. Provide next steps
 
 ### Manual Steps (if needed)
@@ -138,7 +141,7 @@ cd ~/Documents/Google-antigravity/defi-arbitrage-core
 git remote add origin https://github.com/ali-baneshi/defi-arbitrage-core.git
 git branch -M main
 git push -u origin main
-git push origin v0.1.0-alpha
+PYTHONPATH=src python scripts/verify_public_snapshot.py
 ```
 
 ### Verify Everything
@@ -226,7 +229,8 @@ The repository is now:
 - ✅ Security-conscious
 - ✅ Quality-validated
 
-**Next Step**: Run `bash CREATE_NEW_REPO.sh` to create your new repository!
+**Current next step**: use `RELEASE.md` and run the current-snapshot validation
+commands. Do not create a replacement repository or a new tag.
 
 ---
 

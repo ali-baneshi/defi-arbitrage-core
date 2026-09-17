@@ -3,6 +3,8 @@
 ## Current Status
 
 - Maturity: alpha offline MVP.
+- Repository visibility: public.
+- Release approval: gated; public visibility does not mean `public_release_ready`.
 - Local deterministic validation: expected to pass with `PYTHONPATH=src python scripts/validate_all.py --include-rust` when Cargo is available.
 - Public release: blocked until manual gates in `scripts/release_readiness.py` are resolved.
 - Production use: not supported.
@@ -24,4 +26,4 @@
 
 ## Readiness Interpretation
 
-`local_validation_ready: true` means deterministic local checks passed. It does not mean public release readiness, production readiness, trading safety, or contract safety.
+`local_validation_ready: true` means deterministic local checks passed. It does not mean public release readiness, production readiness, trading safety, or contract safety. The repository may remain publicly visible while `public_release_ready` is false.

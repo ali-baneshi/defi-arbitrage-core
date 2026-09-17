@@ -21,19 +21,19 @@ A reusable offline DeFi arbitrage analysis kernel with explicit validation, mult
 - `developer-tools`
 - `infrastructure`
 
-## First Public Release Positioning
+## Current Public Snapshot Positioning
 
-The first public release should be presented as an alpha offline MVP. The strongest professional story is not that this repository is a trading bot. The strongest story is that it is a deterministic, validation-first DeFi analysis kernel with explicit trust boundaries and clear extension points.
+The current public snapshot should be presented as an alpha offline MVP. The strongest professional story is not that this repository is a trading bot. The strongest story is that it is a deterministic, validation-first DeFi analysis kernel with explicit trust boundaries and clear extension points.
 
 ## Suggested Release Notes Structure
 
-### Title
+### Status Title
 
-`defi-arbitrage-core v0.1.0-alpha`
+`defi-arbitrage-core — public alpha snapshot`
 
 ### Opening
 
-This first public release introduces `defi-arbitrage-core`, a reusable offline analysis core for local DeFi market snapshots. The project focuses on deterministic validation, bounded cycle analysis, multi-network portability, stable JSON contracts, and clean separation between analysis and execution.
+This public snapshot provides `defi-arbitrage-core`, a reusable offline analysis core for local DeFi market snapshots. The project focuses on deterministic validation, bounded cycle analysis, multi-network portability, stable JSON contracts, and clean separation between analysis and execution.
 
 ### Highlights
 
@@ -59,7 +59,7 @@ Maintain a copy of:
 - independent history-scan results
 - maintainer attestations for credential rotation and old-history exclusion
 
-## Before Marking The Repository Public
+## Before Marking The Current Snapshot Fully Release-Ready
 
 Confirm the following in practice, not just in prose:
 
@@ -69,6 +69,6 @@ Confirm the following in practice, not just in prose:
 - the repository description and topics match the actual scope
 - no document implies live trading or production safety
 
-The canonical repository for this release is:
+The canonical repository for this public snapshot is:
 
 `https://github.com/ali-baneshi/defi-arbitrage-core`

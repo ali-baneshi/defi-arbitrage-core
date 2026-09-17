@@ -34,7 +34,7 @@ The validator rejects obvious secret patterns, hard-coded addresses, RPC URLs, m
 
 ## Git History Warning
 
-This repository has been reinitialized with a fresh sanitized Git history. The previous local history contained sensitive material; rotate all credentials that may have been exposed and do not publish any backup of the old `.git` directory.
+The active public branch is sanitized for the intended alpha scope, but previous local history contained sensitive material and this clone may still have unreachable Git objects. Rotate all credentials that may have been exposed, independently scan the full history, and do not publish any backup of the old `.git` directory.
 
 ## Local Checks
 

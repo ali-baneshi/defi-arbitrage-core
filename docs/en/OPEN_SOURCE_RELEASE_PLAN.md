@@ -1,5 +1,8 @@
 # Open Source Release Plan
 
+This plan applies to the repository that is already public. It prepares the
+current snapshot; it does not create a replacement repository or a new version.
+
 This plan focuses on making the repository reliable, auditable, and contributor-friendly before broad public adoption.
 
 ## Goals
@@ -98,10 +101,13 @@ Exit criteria:
 - 90 days
   - Complete Phase 2 and foundational Phase 3 governance.
 
-## Definition of Done for Public Promotion
+## Definition of Done for Current-Snapshot Readiness
 
 - Installation and validation are reproducible in documented constrained-network scenarios.
 - Security and dependency checks are mandatory and passing.
 - Deterministic output and schema compatibility checks are mandatory and passing.
 - README and docs are consistent with actual behavior.
 - Release process has verifiable evidence and rollback guidance.
+- Historical credential rotation, old-backup exclusion, independent history
+  scanning, and localization scope are recorded in non-secret release evidence.
+- The package remains `0.1.0a1`; no tag is created or moved for this work.
