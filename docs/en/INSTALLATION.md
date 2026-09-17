@@ -6,7 +6,8 @@ This page covers optional developer installation and container-based execution. 
 
 - Python 3.10 or newer
 - `pip`
-- Optional: `pytest` and `ruff` through the `dev` extra
+- Optional: `pytest` and `ruff` through the `dev` extra. On Python 3.10, this
+  also installs the `tomli` compatibility parser used by repository validators.
 - Optional: Docker for reproducible container runs
 
 ## Setup

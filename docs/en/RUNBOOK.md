@@ -7,6 +7,10 @@
 - No required third-party Python packages for baseline validation.
 - Optional: `pytest`, `ruff`, and Cargo for extended validation.
 
+When running repository validators on Python 3.10, install
+`requirements-dev.txt` so the `tomli` compatibility parser is available;
+Python 3.11+ uses the standard-library `tomllib` module.
+
 ## First-Time Verification
 
 From the repository root:
