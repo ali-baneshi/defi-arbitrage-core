@@ -115,6 +115,47 @@ def test_cli_returns_error_for_directory(tmp_path, capsys):
     assert "not a file" in captured.err
 
 
+def test_cli_policy_flags_are_applied(tmp_path, capsys):
+    exit_code = main(
+        [
+            str(EXAMPLES / "market_snapshot.json"),
+            "--json",
+            "--min-liquidity",
+            "150000",
+            "--max-notional",
+            "200000",
+        ]
+    )
+    captured = capsys.readouterr()
+    assert exit_code == 0
+    assert json.loads(captured.out) == []
+
+    exit_code = main(
+        [str(EXAMPLES / "market_snapshot.json"), "--json", "--max-notional", "1"]
+    )
+    captured = capsys.readouterr()
+    assert exit_code == 0
+    assert json.loads(captured.out)[0]["estimated_capacity"] == 1.0
+
+    path = tmp_path / "two_cycles.json"
+    path.write_text(
+        json.dumps(
+            {
+                "edges": [
+                    {"source": "A", "target": "B", "rate": 2.0},
+                    {"source": "B", "target": "A", "rate": 0.6},
+                    {"source": "C", "target": "D", "rate": 2.0},
+                    {"source": "D", "target": "C", "rate": 0.6},
+                ]
+            }
+        )
+    )
+    exit_code = main([str(path), "--json", "--max-results", "1", "--min-profit-bps", "1"])
+    captured = capsys.readouterr()
+    assert exit_code == 0
+    assert len(json.loads(captured.out)) == 1
+
+
 def test_cli_validate_only_text(capsys):
     exit_code = main([str(EXAMPLES / "market_snapshot.json"), "--validate-only"])
     captured = capsys.readouterr()

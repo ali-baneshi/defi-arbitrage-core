@@ -12,7 +12,7 @@ schemas, one validation command, and one benchmark.
 | Tracked files | 192 | 56 |
 | Python files | 49 | 20 |
 | Source lines under `src/` | 1,901 | 692 |
-| Test lines | 652 | 784 |
+| Test lines | 652 | 825 |
 | Scripts (files / Python lines) | 22 / 2,600 | 2 / 152 |
 | Markdown under `docs/` | 79 files / 3,702 lines | 8 files |
 | All Markdown | 101 files / 5,001 lines | 18 files |
@@ -82,7 +82,7 @@ Commands run from the repository root on Python 3.12.8, Linux.
 | Check | Command | Result |
 | --- | --- | --- |
 | Validation | `PYTHONPATH=src python scripts/validate_all.py` | passed |
-| Tests | `python -m pytest -q` | 76 passed |
+| Tests | `python -m pytest -q` | 77 passed |
 | Lint | `ruff check .` | passed |
 | Benchmark | `python scripts/benchmark.py` | see below |
 | Clean install | `python -m venv .venv-clean && .venv-clean/bin/pip install .` | exit 0 |
