@@ -229,9 +229,12 @@ The earlier estimate of ~2.6 s at 5 hops is environment-dependent; 1.24 s was
 measured here. The conclusion is unchanged: 8 hops is not a safe default or a
 safe maximum without an expansion budget.
 
-After the remediation in this work, the engine aborts at 250,000 edge
-expansions with `AnalysisLimitError` instead of running unbounded. The baseline
-table above records the pre-remediation behavior that justified the budget.
+After the remediation in this work, the engine aborts at 2,000,000 edge
+expansions with `AnalysisLimitError` instead of running unbounded. Measured
+expansion counts are 767,200 (8 assets, 8 hops), 1,192,224 (12 assets,
+5 hops), and 8,510,304 (12 assets, 6 hops); the budget admits the first two
+and aborts the third. The baseline table above records the pre-remediation
+behavior that justified the budget.
 
 ## 9. Minimal target architecture
 

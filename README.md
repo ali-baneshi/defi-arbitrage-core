@@ -114,8 +114,9 @@ errors go to stderr.
 - Snapshot file: 50 MiB, 10,000 edges.
 - Asset symbols: 32 characters, trimmed and uppercased.
 - Node out-degree: 500.
-- Search budget: 250,000 edge expansions. Larger searches fail with
-  `AnalysisLimitError` rather than running unbounded.
+- Search budget: 2,000,000 edge expansions. Larger searches fail with
+  `AnalysisLimitError` rather than running unbounded. A 12-asset/5-hop complete
+  graph fits; a 12-asset/6-hop one does not.
 - `max_hops` is capped at 8, but a dense graph can exhaust the budget well
   before that.
 

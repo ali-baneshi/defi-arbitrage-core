@@ -16,8 +16,9 @@ All notable changes to `defi-arbitrage-core` are documented here.
 - Snapshot paths are normal filesystem paths; the CWD/temp allow-list is gone.
 - Explicit `null` for snapshot metadata is rejected instead of silently
   defaulted.
-- Cycle search has a deterministic 250,000 edge-expansion budget and fails with
-  `AnalysisLimitError` instead of running unbounded.
+- Cycle search has a deterministic 2,000,000 edge-expansion budget and a
+  bounded candidate map; oversize searches fail with `AnalysisLimitError`
+  instead of running unbounded.
 - Documentation collapsed to English under `docs/en/`; the release-evidence
   gate was replaced by a maintainer checklist.
 

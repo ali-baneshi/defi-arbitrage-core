@@ -64,12 +64,20 @@ produce byte-identical JSON for the tested fixtures.
 | Node out-degree | 500 |
 | Hops | 8 |
 | Results | 1,000 |
-| Edge expansions | 250,000 |
+| Edge expansions | 2,000,000 |
+| Retained candidates | 4 × `max_results` |
 
 The expansion budget is the real complexity bound. `max_hops` and
 `max_results` alone do not bound work: the number of simple cycles grows
-quickly with degree. When the budget is exceeded, analysis stops with
-`AnalysisLimitError` and exit code `2`; it does not return partial results.
+quickly with degree. Measured on complete graphs, 12 assets at 5 hops needs
+about 1.19M expansions; at 6 hops it needs about 8.5M. The 2M budget admits
+the former and aborts the latter in roughly two seconds. When the budget is
+exceeded, analysis stops with `AnalysisLimitError` and exit code `2`; it does
+not return partial results.
+
+During the search the candidate map is trimmed to the best `max_results`
+whenever it exceeds four times that size. A dense graph of profitable cycles
+therefore cannot grow memory without bound.
 
 ## Trust boundaries
 

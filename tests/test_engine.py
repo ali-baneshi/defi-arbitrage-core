@@ -85,6 +85,21 @@ def test_unknown_liquidity_is_explicit():
     assert opportunity.capacity_known is False
 
 
+def test_many_profitable_cycles_keep_only_top_results():
+    names = ["A", "B", "C", "D", "E", "F"]
+    edges = tuple(
+        Edge(source, target, 1.01)
+        for source in names
+        for target in names
+        if source != target
+    )
+    opportunities = AnalysisEngine(
+        RiskPolicy(min_profit_bps=1, max_hops=3, max_results=2)
+    ).analyze(MarketSnapshot(edges=edges))
+    assert len(opportunities) == 2
+    assert opportunities[0].profit_bps >= opportunities[1].profit_bps
+
+
 def test_max_results_limits_output():
     snapshot = MarketSnapshot(
         edges=(

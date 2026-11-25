@@ -78,6 +78,7 @@ class AnalysisEngine:
                     existing = opportunities.get(key)
                     if existing is None or opportunity.profit_bps > existing.profit_bps:
                         opportunities[key] = opportunity
+                        self._trim(opportunities)
                 continue
             visited_assets = {hop.source for hop in next_route}
             if edge.target not in visited_assets:
@@ -138,6 +139,18 @@ class AnalysisEngine:
             snapshot_source=snapshot.source,
             snapshot_timestamp=snapshot.timestamp,
         )
+
+    def _trim(self, opportunities: dict[tuple[str, ...], Opportunity]) -> None:
+        """Keep the candidate map bounded while preserving the top results."""
+        limit = max(self.policy.max_results * 4, 1)
+        if len(opportunities) <= limit:
+            return
+        kept = sorted(
+            opportunities.values(), key=lambda item: item.profit_bps, reverse=True
+        )[: self.policy.max_results]
+        opportunities.clear()
+        for item in kept:
+            opportunities[self._canonical_key(item.path)] = item
 
     @staticmethod
     def _canonical_key(path: tuple[str, ...]) -> tuple[str, ...]:

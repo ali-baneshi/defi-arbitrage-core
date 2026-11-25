@@ -117,9 +117,12 @@ defi-arbitrage-core SNAPSHOT [options]
 
 - Search is a simple-cycle DFS with `max_hops` at most 8.
 - Node out-degree is at most 500.
-- A deterministic budget of 250,000 edge expansions aborts the search with an
-  actionable error instead of running unbounded. The budget is part of the
-  contract and is tested.
+- A deterministic budget of 2,000,000 edge expansions aborts the search with
+  an actionable error instead of running unbounded. The budget is part of the
+  contract and is tested. It admits a 12-asset/5-hop complete graph and aborts
+  a 12-asset/6-hop one.
+- At most four times `max_results` candidates are retained during the search,
+  so a dense profitable graph cannot grow an unbounded result map.
 - Output is deterministic for fixed input, policy, interpreter, and code:
   graph iteration is sorted, cycle keys are rotation-normalized, ranking is by
   `profit_bps` with stable input order for ties, and JSON key order is fixed.

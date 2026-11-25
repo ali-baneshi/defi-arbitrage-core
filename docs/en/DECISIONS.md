@@ -134,10 +134,14 @@ and bounds test.
 ## 2026-11-25 — D9: enforce a search-expansion budget
 
 **Decision.** Keep `max_hops <= 8` and degree `<= 500`, but add a deterministic
-250,000 edge-expansion budget that aborts with an `AnalysisLimitError`.
+2,000,000 edge-expansion budget that aborts with `AnalysisLimitError`, and keep
+at most four times `max_results` candidates during the search.
 
-**Evidence.** 12 assets / 132 edges: 5 hops = 1.24 s, 6 hops = 9.04 s,
-8 hops > 30 s. `max_results` does not limit work.
+**Evidence.** 12 assets / 132 edges: 5 hops = 1.19M expansions (1.27 s),
+6 hops = 8.51M expansions (9.60 s), 7 hops = 52.4M (72 s). The 2M budget
+admits 12 assets at 5 hops and aborts 6 hops in about two seconds. `max_results`
+does not limit work, and an unbounded candidate map would otherwise grow with
+the number of profitable cycles.
 
 **Rejected.** Lowering `max_hops` to 6 would still take 9 s on 12 assets and
 would arbitrarily exclude legitimate sparse graphs. A worst-case formula from
