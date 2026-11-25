@@ -22,18 +22,27 @@ class JsonFileProvider:
             raise SnapshotError(f"snapshot file does not exist: {self.path}")
         if not self.path.is_file():
             raise SnapshotError(f"snapshot path is not a file: {self.path}")
-        # Check file size before reading to prevent memory exhaustion
-        if self.path.stat().st_size > MAX_SNAPSHOT_BYTES:
+        try:
+            size = self.path.stat().st_size
+        except OSError as exc:
+            raise SnapshotError(f"snapshot file cannot be read: {self.path}") from exc
+        if size > MAX_SNAPSHOT_BYTES:
             raise SnapshotError(
-                f"snapshot file too large: {self.path.stat().st_size} bytes "
+                f"snapshot file too large: {size} bytes "
                 f"(maximum {MAX_SNAPSHOT_BYTES} bytes)"
             )
         try:
-            payload = json.loads(self.path.read_text(encoding="utf-8"))
+            text = self.path.read_text(encoding="utf-8")
         except UnicodeDecodeError as exc:
             raise SnapshotError(f"snapshot file must be UTF-8 text: {self.path}") from exc
+        except OSError as exc:
+            raise SnapshotError(f"snapshot file cannot be read: {self.path}") from exc
+        try:
+            payload = json.loads(text)
         except JSONDecodeError as exc:
             raise SnapshotError(f"snapshot file is not valid JSON: {self.path}") from exc
+        except RecursionError as exc:
+            raise SnapshotError(f"snapshot JSON is nested too deeply: {self.path}") from exc
         validate_snapshot_payload(payload)
         raw_edges = payload["edges"]
 

@@ -32,9 +32,9 @@ class AnalysisEngine:
             graph[edge.source].append(edge)
         for node_edges in graph.values():
             if len(node_edges) > MAX_EDGE_DEGREE:
-                raise ValueError(
-                    f"Refusing to analyze snapshot with a node having more than "
-                    f"{MAX_EDGE_DEGREE} outgoing edges"
+                raise AnalysisLimitError(
+                    f"snapshot has a node with more than {MAX_EDGE_DEGREE} outgoing "
+                    "edges; split the snapshot or raise --min-liquidity"
                 )
 
         opportunities: dict[tuple[str, ...], Opportunity] = {}

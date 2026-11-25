@@ -5,13 +5,13 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "defi-arbitrage-core"
 version = "0.1.0a1"
-description = "A minimal, safe, extensible market opportunity analysis core for multi-network DeFi research and infrastructure."
+description = "A deterministic offline analyzer for nominal DeFi exchange-rate cycles in local snapshots."
 readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"
 authors = [{name = "Ali Baneshi", email = "baneshi712@gmail.com"}]
 maintainers = [{name = "Ali Baneshi", email = "baneshi712@gmail.com"}]
-keywords = ["arbitrage", "market-analysis", "risk", "plugins", "open-source"]
+keywords = ["arbitrage", "market-analysis", "graph-algorithms", "offline"]
 classifiers = [
   "Development Status :: 3 - Alpha",
   "Intended Audience :: Developers",
@@ -24,7 +24,7 @@ classifiers = [
 dependencies = []
 
 [project.optional-dependencies]
-dev = ["pytest==9.0.3", "ruff==0.15.15"]
+dev = ["pytest==9.0.3", "ruff==0.15.15", "jsonschema==4.26.0"]
 
 [project.scripts]
 defi-arbitrage-core = "arbcore.cli:main"

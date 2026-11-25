@@ -1,0 +1,23 @@
+[
+  {
+    "network": "polygon",
+    "path": [
+      "USDC",
+      "WETH",
+      "DAI",
+      "USDC"
+    ],
+    "venues": [
+      "dex-a",
+      "dex-b",
+      "dex-c"
+    ],
+    "gross_return": 1.0079427572346378,
+    "profit_bps": 79.42757234637776,
+    "limiting_liquidity": 100000.0,
+    "estimated_capacity": 10000.0,
+    "capacity_known": true,
+    "snapshot_source": "example-static-snapshot",
+    "snapshot_timestamp": "2026-05-05T00:00:00Z"
+  }
+]
