@@ -1,8 +1,6 @@
 from __future__ import annotations
 
-import json
 from dataclasses import asdict
-from pathlib import Path
 from typing import Any
 
 from arbcore.errors import SnapshotError
@@ -46,6 +44,9 @@ def validate_snapshot_payload(payload: object) -> None:
         raise SnapshotError(
             f"snapshot JSON contains unsupported keys: {', '.join(sorted(unknown))}"
         )
+    for optional_string in ("source", "network", "timestamp"):
+        if optional_string in payload and payload[optional_string] is None:
+            raise SnapshotError(f"snapshot JSON {optional_string} must not be null")
     source = payload.get("source")
     if source is not None and (not isinstance(source, str) or not source.strip()):
         raise SnapshotError("snapshot JSON source must be a non-empty string when provided")
@@ -104,12 +105,4 @@ def validate_snapshot_payload(payload: object) -> None:
                 )
 
 
-def load_json_payload(path: str | Path) -> object:
-    try:
-        return json.loads(Path(path).read_text(encoding="utf-8"))
-    except FileNotFoundError as exc:
-        raise SnapshotError(f"snapshot file does not exist: {path}") from exc
-    except IsADirectoryError as exc:
-        raise SnapshotError(f"snapshot path is not a file: {path}") from exc
-    except json.JSONDecodeError as exc:
-        raise SnapshotError(f"snapshot file is not valid JSON: {path}") from exc
+

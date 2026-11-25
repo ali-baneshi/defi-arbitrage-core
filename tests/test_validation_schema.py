@@ -5,7 +5,7 @@ import pytest
 
 from arbcore import SnapshotError
 from arbcore.providers import JsonFileProvider
-from arbcore.validation import load_json_payload, validate_snapshot_payload
+from arbcore.validation import validate_snapshot_payload
 
 
 def test_schema_files_are_valid_json():
@@ -34,22 +34,12 @@ def test_rejects_string_numeric_values():
         )
 
 
-def test_load_json_payload_rejects_invalid_json(tmp_path):
-    path = tmp_path / "bad.json"
-    path.write_text("{")
-    with pytest.raises(SnapshotError, match="not valid JSON"):
-        load_json_payload(path)
-
-
-def test_load_json_payload_rejects_missing_file(tmp_path):
-    path = tmp_path / "missing.json"
-    with pytest.raises(SnapshotError, match="does not exist"):
-        load_json_payload(path)
-
-
-def test_load_json_payload_rejects_directory(tmp_path):
-    with pytest.raises(SnapshotError, match="not a file"):
-        load_json_payload(tmp_path)
+def test_rejects_explicit_null_optional_fields():
+    for key in ("source", "network", "timestamp"):
+        with pytest.raises(SnapshotError, match=rf"{key} must not be null"):
+            validate_snapshot_payload(
+                {key: None, "edges": [{"source": "A", "target": "B", "rate": 1}]}
+            )
 
 
 def test_json_provider_rejects_non_utf8_file(tmp_path):

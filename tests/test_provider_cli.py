@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 
 from arbcore.cli import main
 from arbcore.providers import JsonFileProvider
@@ -19,6 +20,13 @@ def test_json_provider_loads_edges(tmp_path):
     assert snapshot.network == "optimism"
     assert snapshot.edges[0].source == "X"
     assert snapshot.edges[0].target == "Y"
+
+
+def test_json_provider_accepts_absolute_path_outside_cwd(tmp_path, monkeypatch):
+    snapshot_path = Path("examples/market_snapshot.json").resolve()
+    monkeypatch.chdir(tmp_path)
+    snapshot = JsonFileProvider(snapshot_path).load_snapshot()
+    assert snapshot.network == "polygon"
 
 
 def test_json_provider_uses_stable_local_source_default(tmp_path):

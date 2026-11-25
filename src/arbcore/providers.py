@@ -7,7 +7,6 @@ from typing import Protocol
 
 from arbcore.errors import SnapshotError
 from arbcore.models import MAX_SNAPSHOT_BYTES, Edge, MarketSnapshot
-from arbcore.path_utils import _resolve_safe_path
 from arbcore.validation import validate_snapshot_payload
 
 
@@ -22,13 +21,9 @@ class JsonFileProvider:
     """Loads a snapshot from a local JSON file without network access."""
 
     def __init__(self, path: str | Path):
-        # Restrict path to be within the current working directory or
-        # system temp directory for security
-        # In the future, this could be made configurable via an environment variable
-        import tempfile
-        self.path = _resolve_safe_path(
-            path, allowed_roots=[Path.cwd(), Path(tempfile.gettempdir())]
-        )
+        # A snapshot is a file the caller explicitly names. Do not impose a
+        # working-directory allow-list: normal CLI users pass absolute paths.
+        self.path = Path(path).expanduser()
 
     def load_snapshot(self) -> MarketSnapshot:
         if not self.path.exists():
