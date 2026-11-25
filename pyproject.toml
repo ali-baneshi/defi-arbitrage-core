@@ -27,8 +27,7 @@ dependencies = []
 dev = ["pytest==9.0.3", "ruff==0.15.15"]
 
 [project.scripts]
-defi-arbitrage-core = "defi_arbitrage_core.cli:main"
-arbcore = "arbcore.cli:main"
+defi-arbitrage-core = "arbcore.cli:main"
 
 [project.urls]
 Homepage = "https://github.com/ali-baneshi/defi-arbitrage-core"

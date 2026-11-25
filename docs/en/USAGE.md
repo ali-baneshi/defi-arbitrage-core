@@ -21,8 +21,10 @@ filesystem paths; there is no allow-list.
 From a checkout without installing:
 
 ```bash
-PYTHONPATH=src python -m arbcore.cli examples/market_snapshot.json --json
+PYTHONPATH=src python -m arbcore examples/market_snapshot.json --json
 ```
+
+`python -m arbcore` and `python -m arbcore.cli` are equivalent.
 
 Examples:
 

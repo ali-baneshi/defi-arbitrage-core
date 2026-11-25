@@ -1,10 +1,12 @@
 import json
+import os
+import subprocess
+import sys
 from pathlib import Path
 
 from arbcore import engine as engine_module
 from arbcore.cli import main
 from arbcore.providers import JsonFileProvider
-from defi_arbitrage_core.cli import main as renamed_main
 
 
 def test_json_provider_loads_edges(tmp_path):
@@ -91,8 +93,14 @@ def test_cli_validate_only(capsys):
     assert "Snapshot is valid" in captured.out
 
 
-def test_renamed_cli_package_outputs_json(capsys):
-    exit_code = renamed_main(["examples/base_market_snapshot.json", "--json"])
-    output = json.loads(capsys.readouterr().out)
-    assert exit_code == 0
-    assert output[0]["network"] == "base"
+def test_module_entrypoint_outputs_json():
+    completed = subprocess.run(
+        [sys.executable, "-m", "arbcore", "examples/base_market_snapshot.json", "--json"],
+        cwd=Path(__file__).resolve().parents[1],
+        env={**os.environ, "PYTHONPATH": "src"},
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    assert completed.returncode == 0, completed.stderr
+    assert json.loads(completed.stdout)[0]["network"] == "base"
