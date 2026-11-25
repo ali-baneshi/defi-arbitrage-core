@@ -2,16 +2,8 @@ from __future__ import annotations
 
 import json
 from dataclasses import asdict
-from typing import Protocol
 
 from arbcore.models import Opportunity
-
-
-class Reporter(Protocol):
-    """Extension point for rendering analysis results."""
-
-    def render(self, opportunities: list[Opportunity]) -> str:
-        """Return a complete string representation of opportunities."""
 
 
 class JsonReporter:

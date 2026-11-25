@@ -1,10 +1,8 @@
 from __future__ import annotations
 
-import json
 import math
 import re
-from dataclasses import dataclass, field
-from typing import Any
+from dataclasses import dataclass
 
 from arbcore.errors import PolicyError, SnapshotError
 
@@ -15,27 +13,11 @@ MAX_ASSET_SYMBOL_LENGTH = 32
 MAX_VENUE_LENGTH = 80
 MAX_SOURCE_LENGTH = 120
 MAX_NETWORK_LENGTH = 64
-MAX_METADATA_BYTES = 1_048_576
-MAX_METADATA_KEYS = 128
-MAX_METADATA_DEPTH = 10
 MAX_EDGE_DEGREE = 500
 MAX_SEARCH_EXPANSIONS = 250_000
 MAX_SNAPSHOT_EDGES = 10_000
 MAX_SNAPSHOT_BYTES = 50 * 1024 * 1024  # 50 MB
-MAX_TOTAL_METADATA_BYTES = 10 * 1024 * 1024  # 10 MB
 RFC3339_UTC_RE = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$")
-
-
-def _metadata_depth(value: Any) -> int:
-    if isinstance(value, dict):
-        if not value:
-            return 1
-        return 1 + max(_metadata_depth(v) for v in value.values())
-    if isinstance(value, list):
-        if not value:
-            return 1
-        return 1 + max(_metadata_depth(v) for v in value)
-    return 0
 
 
 @dataclass(frozen=True)
@@ -53,11 +35,8 @@ class Edge:
     venue: str = "unknown"
     fee_bps: float = 0.0
     liquidity: float | None = None
-    metadata: dict[str, Any] = field(default_factory=dict)
 
     def normalized(self) -> Edge:
-        if not isinstance(self.metadata, dict):
-            raise SnapshotError("edge metadata must be an object")
         return Edge(
             source=str(self.source).strip().upper(),
             target=str(self.target).strip().upper(),
@@ -65,7 +44,6 @@ class Edge:
             venue=str(self.venue).strip() or "unknown",
             fee_bps=float(self.fee_bps),
             liquidity=None if self.liquidity is None else float(self.liquidity),
-            metadata=dict(self.metadata),
         )
 
     def effective_rate(self) -> float:
@@ -88,19 +66,6 @@ class Edge:
             raise SnapshotError("edge fee_bps must be a finite number in [0, 10000)")
         if edge.liquidity is not None and (not math.isfinite(edge.liquidity) or edge.liquidity < 0):
             raise SnapshotError("edge liquidity must be a finite non-negative number")
-        if len(edge.metadata) > MAX_METADATA_KEYS:
-            raise SnapshotError(
-                f"edge metadata must have {MAX_METADATA_KEYS} keys or fewer"
-            )
-        metadata_bytes = len(json.dumps(edge.metadata, separators=(",", ":"), default=str))
-        if metadata_bytes > MAX_METADATA_BYTES:
-            raise SnapshotError(
-                f"edge metadata must be {MAX_METADATA_BYTES} bytes or fewer"
-            )
-        if _metadata_depth(edge.metadata) > MAX_METADATA_DEPTH:
-            raise SnapshotError(
-                f"edge metadata must be nested {MAX_METADATA_DEPTH} levels deep or fewer"
-            )
 
 
 @dataclass(frozen=True)
@@ -142,16 +107,6 @@ class MarketSnapshot:
                 raise SnapshotError(
                     "market snapshot timestamp must use UTC RFC3339 form YYYY-MM-DDTHH:MM:SSZ"
                 )
-        # Check aggregate metadata size to prevent memory exhaustion
-        total_metadata_bytes = sum(
-            len(json.dumps(edge.metadata, separators=(',', ':'), default=str))
-            for edge in self.edges
-        )
-        if total_metadata_bytes > MAX_TOTAL_METADATA_BYTES:
-            raise SnapshotError(
-                f"total metadata size too large: {total_metadata_bytes} bytes "
-                f"(maximum {MAX_TOTAL_METADATA_BYTES} bytes)"
-            )
         for edge in self.edges:
             edge.validate()
 

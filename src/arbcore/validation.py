@@ -1,37 +1,16 @@
 from __future__ import annotations
 
-from dataclasses import asdict
-from typing import Any
-
 from arbcore.errors import SnapshotError
 from arbcore.models import (
     MAX_NETWORK_LENGTH,
+    MAX_SNAPSHOT_EDGES,
     MAX_SOURCE_LENGTH,
     RFC3339_UTC_RE,
-    MarketSnapshot,
-    Opportunity,
 )
-
-SNAPSHOT_SCHEMA_VERSION = "2020-12"
-MAX_SNAPSHOT_EDGES = 10_000
 
 
 def _is_number(value: object) -> bool:
     return isinstance(value, (int, float)) and not isinstance(value, bool)
-
-
-def snapshot_to_dict(snapshot: MarketSnapshot) -> dict[str, Any]:
-    normalized = snapshot.normalized()
-    return {
-        "source": normalized.source,
-        "network": normalized.network,
-        "timestamp": normalized.timestamp,
-        "edges": [asdict(edge) for edge in normalized.edges],
-    }
-
-
-def opportunities_to_dict(opportunities: list[Opportunity]) -> list[dict[str, Any]]:
-    return [asdict(item) for item in opportunities]
 
 
 def validate_snapshot_payload(payload: object) -> None:
@@ -84,16 +63,12 @@ def validate_snapshot_payload(payload: object) -> None:
             "venue",
             "fee_bps",
             "liquidity",
-            "metadata",
         }
         if unknown_edge_keys:
             raise SnapshotError(
                 f"edge at index {index} contains unsupported keys: "
                 f"{', '.join(sorted(unknown_edge_keys))}"
             )
-        metadata = item.get("metadata")
-        if metadata is not None and not isinstance(metadata, dict):
-            raise SnapshotError(f"edge at index {index} metadata must be an object")
         for numeric_key in ("rate", "fee_bps", "liquidity"):
             if (
                 numeric_key in item

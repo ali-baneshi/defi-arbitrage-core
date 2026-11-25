@@ -5,9 +5,6 @@ class ArbCoreError(Exception):
     """Base class for all expected arbcore errors."""
 
 
-class ConfigurationError(ArbCoreError):
-    """Raised when configuration is invalid."""
-
 
 class SnapshotError(ArbCoreError):
     """Raised when a market snapshot cannot be loaded or validated."""

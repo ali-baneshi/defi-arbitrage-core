@@ -27,8 +27,7 @@
         "rate": {"type": "number", "exclusiveMinimum": 0},
         "venue": {"type": "string", "maxLength": 80},
         "fee_bps": {"type": "number", "minimum": 0, "exclusiveMaximum": 10000},
-        "liquidity": {"type": ["number", "null"], "minimum": 0},
-        "metadata": {"type": "object"}
+        "liquidity": {"type": ["number", "null"], "minimum": 0}
       }
     }
   }

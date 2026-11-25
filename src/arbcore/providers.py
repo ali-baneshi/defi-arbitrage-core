@@ -3,18 +3,10 @@ from __future__ import annotations
 import json
 from json import JSONDecodeError
 from pathlib import Path
-from typing import Protocol
 
 from arbcore.errors import SnapshotError
 from arbcore.models import MAX_SNAPSHOT_BYTES, Edge, MarketSnapshot
 from arbcore.validation import validate_snapshot_payload
-
-
-class MarketDataProvider(Protocol):
-    """Extension point for loading market snapshots."""
-
-    def load_snapshot(self) -> MarketSnapshot:
-        """Return a validated market snapshot."""
 
 
 class JsonFileProvider:
@@ -71,7 +63,6 @@ class JsonFileProvider:
                 venue=str(item.get("venue", "unknown")),
                 fee_bps=float(item.get("fee_bps", 0.0)),
                 liquidity=(None if item.get("liquidity") is None else float(item["liquidity"])),
-                metadata=dict(item.get("metadata", {})),
             ).normalized()
         except (TypeError, ValueError) as exc:
             raise SnapshotError(f"edge at index {index} contains invalid numeric fields") from exc
