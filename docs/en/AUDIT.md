@@ -229,6 +229,10 @@ The earlier estimate of ~2.6 s at 5 hops is environment-dependent; 1.24 s was
 measured here. The conclusion is unchanged: 8 hops is not a safe default or a
 safe maximum without an expansion budget.
 
+After the remediation in this work, the engine aborts at 250,000 edge
+expansions with `AnalysisLimitError` instead of running unbounded. The baseline
+table above records the pre-remediation behavior that justified the budget.
+
 ## 9. Minimal target architecture
 
 ```text

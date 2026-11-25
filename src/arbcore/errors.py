@@ -17,5 +17,9 @@ class PolicyError(ArbCoreError):
     """Raised when risk policy settings are invalid."""
 
 
+class AnalysisLimitError(ArbCoreError):
+    """Raised when a snapshot exceeds the deterministic search budget."""
+
+
 class ContractValidationError(ArbCoreError):
     """Raised when contract manifests or templates are invalid."""

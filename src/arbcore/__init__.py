@@ -13,6 +13,7 @@ from arbcore.contracts import (
 from arbcore.diagnostics import collect_diagnostics, diagnostics_json
 from arbcore.engine import AnalysisEngine
 from arbcore.errors import (
+    AnalysisLimitError,
     ArbCoreError,
     ConfigurationError,
     ContractValidationError,
@@ -32,6 +33,7 @@ from arbcore.validation import opportunities_to_dict, snapshot_to_dict, validate
 
 __all__ = [
     "AnalysisEngine",
+    "AnalysisLimitError",
     "ArbCoreError",
     "ConfigurationError",
     "ContractArtifact",

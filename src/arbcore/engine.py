@@ -4,7 +4,15 @@ import math
 from collections import defaultdict
 from collections.abc import Iterable
 
-from arbcore.models import MAX_EDGE_DEGREE, Edge, MarketSnapshot, Opportunity, RiskPolicy
+from arbcore.errors import AnalysisLimitError
+from arbcore.models import (
+    MAX_EDGE_DEGREE,
+    MAX_SEARCH_EXPANSIONS,
+    Edge,
+    MarketSnapshot,
+    Opportunity,
+    RiskPolicy,
+)
 
 
 class AnalysisEngine:
@@ -30,8 +38,9 @@ class AnalysisEngine:
                 )
 
         opportunities: dict[tuple[str, ...], Opportunity] = {}
+        budget = _SearchBudget(MAX_SEARCH_EXPANSIONS)
         for start in sorted(graph):
-            self._walk(start, start, graph, [], 1.0, snapshot, opportunities)
+            self._walk(start, start, graph, [], 1.0, snapshot, opportunities, budget)
         ranked = sorted(opportunities.values(), key=lambda item: item.profit_bps, reverse=True)
         return ranked[: self.policy.max_results]
 
@@ -44,11 +53,13 @@ class AnalysisEngine:
         gross_return: float,
         snapshot: MarketSnapshot,
         opportunities: dict[tuple[str, ...], Opportunity],
+        budget: _SearchBudget,
     ) -> None:
         if len(route) >= self.policy.max_hops:
             return
 
         for edge in graph.get(current, []):
+            budget.spend()
             next_return = gross_return * edge.effective_rate()
             if not math.isfinite(next_return):
                 continue
@@ -71,7 +82,14 @@ class AnalysisEngine:
             visited_assets = {hop.source for hop in next_route}
             if edge.target not in visited_assets:
                 self._walk(
-                    start, edge.target, graph, next_route, next_return, snapshot, opportunities
+                    start,
+                    edge.target,
+                    graph,
+                    next_route,
+                    next_return,
+                    snapshot,
+                    opportunities,
+                    budget,
                 )
 
     def _passes_policy(self, opportunity: Opportunity) -> bool:
@@ -127,3 +145,19 @@ class AnalysisEngine:
         rotations = [cycle[index:] + cycle[:index] for index in range(len(cycle))]
         canonical = min(rotations)
         return canonical + (canonical[0],)
+
+
+class _SearchBudget:
+    """Counts edge expansions so pathological snapshots fail deterministically."""
+
+    def __init__(self, limit: int):
+        self.remaining = limit
+
+    def spend(self) -> None:
+        self.remaining -= 1
+        if self.remaining < 0:
+            raise AnalysisLimitError(
+                "snapshot search exceeds the analysis budget of "
+                f"{MAX_SEARCH_EXPANSIONS} edge expansions; reduce --max-hops, "
+                "raise --min-liquidity, or split the snapshot"
+            )

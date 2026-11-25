@@ -1,6 +1,14 @@
 import pytest
 
-from arbcore import AnalysisEngine, Edge, MarketSnapshot, RiskPolicy, SnapshotError
+from arbcore import (
+    AnalysisEngine,
+    AnalysisLimitError,
+    Edge,
+    MarketSnapshot,
+    RiskPolicy,
+    SnapshotError,
+)
+from arbcore import engine as engine_module
 
 
 def test_detects_profitable_cycle_after_fees():
@@ -105,6 +113,22 @@ def test_direct_model_normalization_handles_non_string_symbols():
     snapshot = MarketSnapshot(edges=(Edge(123, "B", 2), Edge("B", 123, 0.6)))
     opportunities = AnalysisEngine(RiskPolicy(min_profit_bps=1)).analyze(snapshot)
     assert opportunities[0].path == ("123", "B", "123")
+
+
+def test_search_budget_aborts_dense_graph(monkeypatch):
+    monkeypatch.setattr(engine_module, "MAX_SEARCH_EXPANSIONS", 5)
+    names = ["A", "B", "C", "D", "E"]
+    snapshot = MarketSnapshot(
+        tuple(Edge(source, target, 1.0) for source in names for target in names if source != target)
+    )
+    with pytest.raises(AnalysisLimitError, match="analysis budget"):
+        AnalysisEngine(RiskPolicy(min_profit_bps=999999, max_hops=5)).analyze(snapshot)
+
+
+def test_search_budget_does_not_reject_small_graphs():
+    snapshot = MarketSnapshot(edges=(Edge("A", "B", 2.0), Edge("B", "A", 0.6)))
+    opportunities = AnalysisEngine(RiskPolicy(min_profit_bps=1)).analyze(snapshot)
+    assert len(opportunities) == 1
 
 
 def test_snapshot_normalizes_network_name():

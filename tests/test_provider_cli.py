@@ -1,6 +1,7 @@
 import json
 from pathlib import Path
 
+from arbcore import engine as engine_module
 from arbcore.cli import main
 from arbcore.providers import JsonFileProvider
 from defi_arbitrage_core.cli import main as renamed_main
@@ -55,6 +56,25 @@ def test_cli_outputs_json(capsys):
     assert output[0]["network"] == "polygon"
     assert output[0]["profit_bps"] > 0
     assert "estimated_capacity" in output[0]
+
+
+def test_cli_returns_error_when_search_budget_is_exceeded(tmp_path, monkeypatch, capsys):
+    monkeypatch.setattr(engine_module, "MAX_SEARCH_EXPANSIONS", 1)
+    path = tmp_path / "cycle.json"
+    path.write_text(
+        json.dumps(
+            {
+                "edges": [
+                    {"source": "A", "target": "B", "rate": 2.0},
+                    {"source": "B", "target": "A", "rate": 0.6},
+                ]
+            }
+        )
+    )
+    exit_code = main([str(path), "--min-profit-bps", "1"])
+    captured = capsys.readouterr()
+    assert exit_code == 2
+    assert "analysis budget" in captured.err
 
 
 def test_cli_returns_error_for_missing_file(capsys):
