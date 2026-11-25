@@ -191,6 +191,21 @@ owner approval. The reduction does not require either.
 
 **Reversal.** Requires explicit owner and legal review; out of scope here.
 
+## 2026-11-25 — D13: use the narrow production-ready definition
+
+**Decision.** Treat `docs/en/PRODUCT.md` as the production-ready bar. The
+result may be called production-ready for offline nominal analysis only; it is
+not trading-ready.
+
+**Evidence.** `docs/en/FINAL_AUDIT.md` records the eight checks and the
+remaining model limitations.
+
+**Rejected.** Calling the project production-ready without qualification would
+overstate a linear model with no execution, gas, slippage, or settlement.
+
+**Reversal.** Remove the verdict or tighten the definition; do not widen the
+model without a new input contract and tests.
+
 ## Open question defaults
 
 The six Phase 0 questions were answered by default because the mandate says to

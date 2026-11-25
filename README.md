@@ -1,6 +1,8 @@
 > **Alpha, offline analysis only.** This project ranks nominal opportunity
 > candidates from a local snapshot. It does not trade, sign, fetch prices, or
-> claim executable profit. See [docs/en/PRODUCT.md](docs/en/PRODUCT.md).
+> claim executable profit. [docs/en/PRODUCT.md](docs/en/PRODUCT.md) defines the
+> narrow bar this repository is held to; [docs/en/FINAL_AUDIT.md](docs/en/FINAL_AUDIT.md)
+> records the evidence and the limits.
 
 # defi-arbitrage-core
 
@@ -155,6 +157,8 @@ records representative and worst-case search behavior. See
 - [docs/en/DECISIONS.md](docs/en/DECISIONS.md) — judgment calls and reversal paths.
 - [docs/en/RELEASE_CHECKLIST.md](docs/en/RELEASE_CHECKLIST.md) — maintainer
   checklist.
+- [docs/en/FINAL_AUDIT.md](docs/en/FINAL_AUDIT.md) — before/after evidence,
+  known limitations, and the production-ready verdict.
 
 ## License
 
