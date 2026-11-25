@@ -20,6 +20,14 @@ MAX_SNAPSHOT_BYTES = 50 * 1024 * 1024  # 50 MB
 RFC3339_UTC_RE = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$")
 
 
+def _is_finite_number(value: object) -> bool:
+    return (
+        isinstance(value, (int, float))
+        and not isinstance(value, bool)
+        and math.isfinite(value)
+    )
+
+
 @dataclass(frozen=True)
 class Edge:
     """A directed exchange quote from one asset to another.
@@ -37,13 +45,19 @@ class Edge:
     liquidity: float | None = None
 
     def normalized(self) -> Edge:
+        try:
+            rate = float(self.rate)
+            fee_bps = float(self.fee_bps)
+            liquidity = None if self.liquidity is None else float(self.liquidity)
+        except (TypeError, ValueError) as exc:
+            raise SnapshotError("edge numeric fields must be numbers") from exc
         return Edge(
             source=str(self.source).strip().upper(),
             target=str(self.target).strip().upper(),
-            rate=float(self.rate),
+            rate=rate,
             venue=str(self.venue).strip() or "unknown",
-            fee_bps=float(self.fee_bps),
-            liquidity=None if self.liquidity is None else float(self.liquidity),
+            fee_bps=fee_bps,
+            liquidity=liquidity,
         )
 
     def effective_rate(self) -> float:
@@ -78,10 +92,13 @@ class MarketSnapshot:
     timestamp: str | None = None
 
     def normalized(self) -> MarketSnapshot:
+        for edge in self.edges:
+            if not isinstance(edge, Edge):
+                raise SnapshotError("market snapshot edges must be Edge objects")
         return MarketSnapshot(
             edges=tuple(edge.normalized() for edge in self.edges),
-            source=(self.source or "local").strip(),
-            network=(self.network or "polygon").strip().lower(),
+            source=str(self.source if self.source is not None else "local").strip(),
+            network=str(self.network if self.network is not None else "polygon").strip().lower(),
             timestamp=self.timestamp,
         )
 
@@ -108,6 +125,8 @@ class MarketSnapshot:
                     "market snapshot timestamp must use UTC RFC3339 form YYYY-MM-DDTHH:MM:SSZ"
                 )
         for edge in self.edges:
+            if not isinstance(edge, Edge):
+                raise SnapshotError("market snapshot edges must be Edge objects")
             edge.validate()
 
 
@@ -125,18 +144,22 @@ class RiskPolicy:
     max_results: int = 25
 
     def validate(self) -> None:
-        if not math.isfinite(self.min_profit_bps) or self.min_profit_bps < 0:
+        if not _is_finite_number(self.min_profit_bps) or self.min_profit_bps < 0:
             raise PolicyError("min_profit_bps must be a finite non-negative number")
+        if isinstance(self.max_hops, bool) or not isinstance(self.max_hops, int):
+            raise PolicyError("max_hops must be an integer")
         if self.max_hops < 2:
             raise PolicyError("max_hops must be at least 2")
         if self.max_hops > MAX_REASONABLE_HOPS:
             raise PolicyError(f"max_hops must be at most {MAX_REASONABLE_HOPS}")
-        if not math.isfinite(self.min_liquidity) or self.min_liquidity < 0:
+        if not _is_finite_number(self.min_liquidity) or self.min_liquidity < 0:
             raise PolicyError("min_liquidity must be a finite non-negative number")
-        if not math.isfinite(self.max_notional) or self.max_notional <= 0:
+        if not _is_finite_number(self.max_notional) or self.max_notional <= 0:
             raise PolicyError("max_notional must be a finite positive number")
         if self.max_notional < self.min_liquidity:
             raise PolicyError("max_notional must be at least min_liquidity")
+        if isinstance(self.max_results, bool) or not isinstance(self.max_results, int):
+            raise PolicyError("max_results must be an integer")
         if self.max_results < 1:
             raise PolicyError("max_results must be at least 1")
         if self.max_results > MAX_REASONABLE_RESULTS:

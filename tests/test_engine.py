@@ -5,6 +5,7 @@ from arbcore import (
     AnalysisLimitError,
     Edge,
     MarketSnapshot,
+    PolicyError,
     RiskPolicy,
     SnapshotError,
 )
@@ -129,6 +130,40 @@ def test_search_budget_does_not_reject_small_graphs():
     snapshot = MarketSnapshot(edges=(Edge("A", "B", 2.0), Edge("B", "A", 0.6)))
     opportunities = AnalysisEngine(RiskPolicy(min_profit_bps=1)).analyze(snapshot)
     assert len(opportunities) == 1
+
+
+def test_direct_edge_rejects_non_numeric_rate():
+    with pytest.raises(SnapshotError, match="numeric fields"):
+        Edge("A", "B", "not-a-number").validate()
+
+
+def test_direct_snapshot_normalizes_non_string_source_and_network():
+    snapshot = MarketSnapshot(
+        edges=(Edge("A", "B", 2), Edge("B", "A", 0.6)),
+        source=123,
+        network=456,
+    )
+    opportunity = AnalysisEngine(RiskPolicy(min_profit_bps=1)).analyze(snapshot)[0]
+    assert opportunity.snapshot_source == "123"
+    assert opportunity.network == "456"
+
+
+def test_direct_snapshot_rejects_non_edge_items():
+    snapshot = MarketSnapshot(edges=({"source": "A"},))
+    with pytest.raises(SnapshotError, match="Edge objects"):
+        AnalysisEngine().analyze(snapshot)
+
+
+def test_policy_rejects_non_integer_hop_and_result_limits():
+    with pytest.raises(PolicyError, match="max_hops must be an integer"):
+        RiskPolicy(max_hops=3.5).validate()
+    with pytest.raises(PolicyError, match="max_results must be an integer"):
+        RiskPolicy(max_results=2.5).validate()
+
+
+def test_policy_rejects_non_numeric_profit_floor():
+    with pytest.raises(PolicyError, match="min_profit_bps"):
+        RiskPolicy(min_profit_bps="5").validate()
 
 
 def test_snapshot_normalizes_network_name():
