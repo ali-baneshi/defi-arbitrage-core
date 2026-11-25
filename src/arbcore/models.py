@@ -103,30 +103,29 @@ class MarketSnapshot:
         )
 
     def validate(self) -> None:
-        if not self.edges:
+        snapshot = self.normalized()
+        if not snapshot.edges:
             raise SnapshotError("market snapshot must contain at least one edge")
-        if not isinstance(self.source, str) or not self.source.strip():
+        if not snapshot.source or not snapshot.source.strip():
             raise SnapshotError("market snapshot source must be a non-empty string")
-        if len(self.source.strip()) > MAX_SOURCE_LENGTH:
+        if len(snapshot.source.strip()) > MAX_SOURCE_LENGTH:
             raise SnapshotError(
                 f"market snapshot source must be {MAX_SOURCE_LENGTH} characters or fewer"
             )
-        if not isinstance(self.network, str) or not self.network.strip():
+        if not snapshot.network or not snapshot.network.strip():
             raise SnapshotError("market snapshot network must be a non-empty string")
-        if len(self.network.strip()) > MAX_NETWORK_LENGTH:
+        if len(snapshot.network.strip()) > MAX_NETWORK_LENGTH:
             raise SnapshotError(
                 f"market snapshot network must be {MAX_NETWORK_LENGTH} characters or fewer"
             )
-        if self.timestamp is not None:
-            if not isinstance(self.timestamp, str):
+        if snapshot.timestamp is not None:
+            if not isinstance(snapshot.timestamp, str):
                 raise SnapshotError("market snapshot timestamp must be a string when provided")
-            if not RFC3339_UTC_RE.fullmatch(self.timestamp):
+            if not RFC3339_UTC_RE.fullmatch(snapshot.timestamp):
                 raise SnapshotError(
                     "market snapshot timestamp must use UTC RFC3339 form YYYY-MM-DDTHH:MM:SSZ"
                 )
-        for edge in self.edges:
-            if not isinstance(edge, Edge):
-                raise SnapshotError("market snapshot edges must be Edge objects")
+        for edge in snapshot.edges:
             edge.validate()
 
 
