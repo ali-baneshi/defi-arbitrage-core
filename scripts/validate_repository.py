@@ -283,7 +283,11 @@ def check_release_identity() -> list[str]:
 
 
 def check_localization_parity() -> list[str]:
-    english = {path.name for path in (ROOT / "docs" / "en").glob("*.md")}
+    # Audit records are canonical English-only documents, not localized user docs.
+    english_only = {"AUDIT.md", "DECISIONS.md", "PRODUCT.md"}
+    english = {
+        path.name for path in (ROOT / "docs" / "en").glob("*.md")
+    } - english_only
     errors: list[str] = []
     for locale in ("fa", "zh"):
         localized = {path.name for path in (ROOT / "docs" / locale).glob("*.md")}
