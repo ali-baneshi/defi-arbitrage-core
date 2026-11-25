@@ -16,5 +16,3 @@ about: Report a reproducible problem
 - Python version:
 - OS:
 - Did `PYTHONPATH=src python scripts/validate_all.py` pass?
-- Was optional Rust involved?
-- Was contract validation involved?

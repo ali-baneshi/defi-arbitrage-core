@@ -3,6 +3,6 @@ contact_links:
   - name: Security vulnerability report
     url: mailto:baneshi712@gmail.com
     about: Report suspected vulnerabilities privately instead of opening a public issue.
-  - name: Open-source hardening plan
-    url: https://github.com/ali-baneshi/defi-arbitrage-core/blob/main/docs/en/OPEN_SOURCE_RELEASE_PLAN.md
-    about: Review release phases, scope, and hardening criteria before filing roadmap issues.
+  - name: Product definition
+    url: https://github.com/ali-baneshi/defi-arbitrage-core/blob/main/docs/en/PRODUCT.md
+    about: Read the supported promise and contracts before filing roadmap issues.

@@ -1,6 +1,6 @@
 ---
 name: Release hardening
-about: Track concrete tasks required for safe public release
+about: Track concrete tasks required for a maintainer release
 ---
 
 ## Objective
@@ -18,18 +18,18 @@ about: Track concrete tasks required for safe public release
 - [ ] Installation reliability
 - [ ] Supply-chain risk
 - [ ] Secret exposure risk
-- [ ] Contract/schema drift
+- [ ] Schema drift
 - [ ] Scope-boundary regressions
 
 ## Validation Plan
 
 - [ ] `PYTHONPATH=src python scripts/validate_all.py`
-- [ ] `PYTHONPATH=src python scripts/validate_golden_fixtures.py`
-- [ ] `PYTHONPATH=src python scripts/validate_schema_consistency.py`
-- [ ] `PYTHONPATH=src python scripts/release_readiness.py --json`
+- [ ] `python -m pytest -q`
+- [ ] `ruff check .`
+- [ ] `python scripts/benchmark.py`
 
 ## Exit Criteria
 
 - [ ] All checks pass in CI
 - [ ] README/docs updated for user-facing changes
-- [ ] Release notes include risk and rollback notes
+- [ ] `docs/en/RELEASE_CHECKLIST.md` is complete

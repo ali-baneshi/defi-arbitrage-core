@@ -1,8 +1,6 @@
 # CODEOWNERS
-# Require review from maintainers for sensitive or core paths.
+# Require review from maintainers for core paths.
 
 * @ali-baneshi
 
-security/ @ali-baneshi
-contracts/ @ali-baneshi
 src/arbcore/ @ali-baneshi

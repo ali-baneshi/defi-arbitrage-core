@@ -22,12 +22,6 @@ from arbcore.errors import (
 from arbcore.models import Edge, MarketSnapshot, Opportunity, RiskPolicy
 from arbcore.providers import JsonFileProvider, MarketDataProvider
 from arbcore.reporters import JsonReporter, Reporter, TextReporter
-from arbcore.service import (
-    RustAnalysisService,
-    RustServiceUnavailable,
-    analyze_snapshot,
-    analyze_with_optional_rust,
-)
 from arbcore.validation import opportunities_to_dict, snapshot_to_dict, validate_snapshot_payload
 
 __all__ = [
@@ -49,16 +43,12 @@ __all__ = [
     "PolicyError",
     "Reporter",
     "RiskPolicy",
-    "RustAnalysisService",
-    "RustServiceUnavailable",
     "SnapshotError",
     "TextReporter",
     "__version__",
     "report_to_json",
     "opportunities_to_dict",
     "snapshot_to_dict",
-    "analyze_snapshot",
-    "analyze_with_optional_rust",
     "validate_contract_workspace",
     "validate_snapshot_payload",
 ]

@@ -1,7 +1,0 @@
-{
-    "ok": false,
-    "error": {
-        "type": "SnapshotError",
-        "message": "snapshot file does not exist: missing.json"
-    }
-}

@@ -10,7 +10,6 @@ from arbcore.errors import ArbCoreError
 from arbcore.models import RiskPolicy
 from arbcore.providers import JsonFileProvider
 from arbcore.reporters import JsonReporter, TextReporter
-from arbcore.service import analyze_with_optional_rust
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -34,17 +33,6 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Validate the snapshot without running analysis",
     )
-    parser.add_argument(
-        "--engine",
-        choices=["python", "auto"],
-        default="python",
-        help="Use Python only or optional Rust with Python fallback",
-    )
-    parser.add_argument(
-        "--rust-binary",
-        default="defi-arbitrage-core-rs",
-        help="Path/name of optional Rust analyzer binary",
-    )
     return parser
 
 
@@ -61,16 +49,8 @@ def main(argv: list[str] | None = None) -> int:
             else:
                 print(f"Snapshot is valid: {snapshot_path}")
             return 0
-        if args.engine == "auto":
-            opportunities, engine_name = analyze_with_optional_rust(
-                snapshot_path, policy, args.rust_binary
-            )
-        else:
-            opportunities = AnalysisEngine(policy).analyze(snapshot)
-            engine_name = "python"
+        opportunities = AnalysisEngine(policy).analyze(snapshot)
         reporter = JsonReporter() if args.json else TextReporter()
-        if not args.json and args.engine == "auto":
-            print(f"Engine: {engine_name}")
         print(reporter.render(opportunities))
         return 0
     except ArbCoreError as exc:

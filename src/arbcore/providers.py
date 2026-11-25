@@ -48,7 +48,6 @@ class JsonFileProvider:
         edges = tuple(self._parse_edge(item, index) for index, item in enumerate(raw_edges))
         snapshot = MarketSnapshot(
             edges=edges,
-            # Keep the default stable across Python and Rust process-boundary analysis.
             source=str(payload.get("source", "local")),
             network=str(payload.get("network", "polygon")),
             timestamp=payload.get("timestamp"),

@@ -32,11 +32,10 @@ about: Track a security hardening or vulnerability remediation task
 ## Validation
 
 - [ ] `PYTHONPATH=src python scripts/validate_all.py`
-- [ ] `PYTHONPATH=src python scripts/validate_repository.py`
-- [ ] `PYTHONPATH=src python scripts/release_readiness.py --json`
+- [ ] `python -m pytest -q`
+- [ ] `ruff check .`
 
 ## Follow-up
 
-- [ ] Backport needed
 - [ ] Security.md/process update needed
-- [ ] Changelog/release note entry added
+- [ ] Changelog entry added

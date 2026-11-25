@@ -11,7 +11,8 @@ about: Propose a bounded improvement to the analysis core
 
 ## Why It Belongs In This Repository
 
-Explain why this fits an offline deterministic analysis core rather than an execution, wallet, RPC, or deployment layer.
+Explain why this fits a deterministic offline analyzer rather than an
+execution, wallet, RPC, or deployment layer.
 
 ## Expected Contracts Affected
 
@@ -19,8 +20,6 @@ Explain why this fits an offline deterministic analysis core rather than an exec
 - [ ] JSON schemas
 - [ ] Validation rules
 - [ ] Examples
-- [ ] Rust parity path
-- [ ] Documentation in English, Persian, and Chinese
+- [ ] Documentation
 
 ## Validation Plan
-
