@@ -4,6 +4,11 @@ All notable changes to `defi-arbitrage-core` are documented here.
 
 ## Unreleased
 
+### Added
+
+- Schema-parity, adversarial input, CLI contract, and byte-identical golden
+  output tests.
+
 ### Changed
 
 - Reduced the product to one deterministic offline analyzer: one import

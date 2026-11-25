@@ -3,7 +3,7 @@ PIP_INDEX_URL ?=
 PIP_EXTRA_INDEX_URL ?=
 PIP_FLAGS ?= --no-build-isolation
 
-.PHONY: bootstrap validate test lint benchmark docker-build docker-validate
+.PHONY: bootstrap validate test lint benchmark docker-build
 
 bootstrap:
 	$(PYTHON) -m venv .venv
@@ -24,6 +24,3 @@ benchmark:
 
 docker-build:
 	docker build -t defi-arbitrage-core:local .
-
-docker-validate:
-	docker run --rm --entrypoint python defi-arbitrage-core:local scripts/validate_all.py

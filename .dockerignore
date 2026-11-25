@@ -1,5 +1,6 @@
 .git
 .venv
+.venv-*
 venv
 __pycache__
 .pytest_cache
@@ -7,5 +8,3 @@ __pycache__
 build
 dist
 *.egg-info
-rust/arbcore-rs/target
-target

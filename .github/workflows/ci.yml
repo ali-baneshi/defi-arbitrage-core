@@ -49,4 +49,4 @@ jobs:
         run: docker build -t defi-arbitrage-core:ci .
 
       - name: Docker smoke test
-        run: docker run --rm --entrypoint python defi-arbitrage-core:ci -c "import sys; print(sys.version)"
+        run: docker run --rm defi-arbitrage-core:ci examples/market_snapshot.json --json

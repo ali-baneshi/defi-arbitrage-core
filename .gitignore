@@ -6,17 +6,10 @@ __pycache__/
 .ruff_cache/
 .mypy_cache/
 .venv/
+.venv-*/
 venv/
 dist/
 build/
-.venv/
-.venv*/
-__pycache__/
-.pytest_cache/
-.ruff_cache/
-.mypy_cache/
-*.pyc
-**/target/
 
 # IDE and editor files
 .idea/
@@ -28,7 +21,6 @@ __pycache__/
 # Secrets and local state
 .env
 .env.*
-!.env.example
 *.key
 *.pem
 *.p12
@@ -51,7 +43,3 @@ artifacts/
 *.pth
 *.pt
 *.pkl
-rust/arbcore-rs/target/
-.kilo/
-.kilo/
-.kilo/
