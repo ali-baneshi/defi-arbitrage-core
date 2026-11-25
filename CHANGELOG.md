@@ -1,26 +1,27 @@
 # Changelog
 
-All notable changes to `defi-arbitrage-core` should be documented in this file.
+All notable changes to `defi-arbitrage-core` are documented here.
 
 ## Unreleased
 
-### Release preparation
-- Align package and repository metadata with the canonical `defi-arbitrage-core` repository.
-- Prepare the `0.1.0-alpha` release evidence and publication checks.
-
-### Added
-- Explicit multi-network snapshot and opportunity support through the `network` field
-- Public `defi_arbitrage_core` Python package alias and `defi-arbitrage-core` CLI entrypoint
-- Additional example snapshot for Base
-- Stronger Rust/Python parity checks and fail-closed response validation
-- Multilingual documentation refresh for English, Persian, and Chinese core pages
-
 ### Changed
-- Public project branding from Polygon-specific naming to `defi-arbitrage-core`
-- README positioning toward deterministic DeFi analysis infrastructure instead of bot framing
-- Output/reporting now preserves network identity
 
-### Fixed
-- Contract validation path resolution from manifest location
-- UTF-8 decoding failures now surface as safe project-specific errors
-- Rust adapter now rejects malformed top-level payloads and malformed numeric fields safely
+- Reduced the product to one deterministic offline analyzer: one import
+  package, one console script, two published schemas, one validation command.
+- Snapshot paths are normal filesystem paths; the CWD/temp allow-list is gone.
+- Explicit `null` for snapshot metadata is rejected instead of silently
+  defaulted.
+- Cycle search has a deterministic 250,000 edge-expansion budget and fails with
+  `AnalysisLimitError` instead of running unbounded.
+- Documentation collapsed to English under `docs/en/`; the release-evidence
+  gate was replaced by a maintainer checklist.
+
+### Removed
+
+- Optional Rust analyzer, process adapter, parity fixtures, and CI cost.
+- Solidity/Vyper template workspace and validators.
+- Release-evidence schemas, scripts, and readiness report.
+- Diagnostics, self-check, policy-dump, structured-error, and optional engine
+  CLI flags.
+- Environment-based configuration and the implicit default snapshot.
+- Persian and Chinese documentation trees and duplicate release/status pages.

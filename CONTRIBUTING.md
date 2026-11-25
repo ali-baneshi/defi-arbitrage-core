@@ -1,40 +1,43 @@
 # Contributing
 
-Thank you for contributing. The project goal is a small, secure, dependency-light offline analysis core that maintainers can audit quickly.
+The goal is a small, dependency-light offline analyzer that one maintainer can
+audit in an afternoon. Prefer deletion and repair over new layers.
 
-## Contribution Priorities
+## Before changing behavior
 
-High-value contributions usually improve one or more of these areas:
+1. Read `docs/en/PRODUCT.md` and `docs/en/ARCHITECTURE.md`.
+2. Check whether the change expands the input/output contract. If it does,
+   update the schema, runtime validation, tests, and docs together.
+3. Add a test only for a contract or a real failure mode, not for an
+   implementation detail.
 
-- deterministic analysis quality
-- validation and fail-closed behavior
-- public data-contract clarity
-- extensibility for providers, reporters, and network-specific surrounding tooling
-- documentation quality and reviewer experience
-
-## Baseline Validation
+## Validation
 
 ```bash
 PYTHONPATH=src python scripts/validate_all.py
-```
-
-Optional when tools are already available:
-
-```bash
-pytest
+python -m pytest -q
 ruff check .
-cargo test --manifest-path rust/arbcore-rs/Cargo.toml
 ```
 
 ## Rules
 
-- Keep live trading, private keys, signing, RPC-specific code, and deployment logic outside this core.
-- Add tests for providers, reporters, policies, CLI flags, validation behavior, Rust changes, and contract validation changes.
-- Keep contract templates under `contracts/`, marked `ARBCORE_CONTRACT_TEMPLATE` and `NOT AUDITED`.
-- Do not commit generated artifacts, logs, databases, model files, `.env` files, credentials, or `*.egg-info/` metadata.
-- Prefer explicit data contracts and small interfaces over framework-heavy abstractions.
-- Update English docs first; refresh Persian and Chinese docs in the same change when feasible, and update `docs/TRANSLATION_STATUS.md` if they intentionally lag.
+- Keep live trading, wallets, signing, RPC, and deployment out of this package.
+- Do not add a runtime dependency without a demonstrated need and an install
+  check.
+- Keep one import package (`arbcore`) and one console script
+  (`defi-arbitrage-core`).
+- Keep documentation in English under `docs/en/`.
+- Do not commit generated files, caches, logs, databases, secrets, or local
+  paths.
+- Every behavior change updates the docs that describe it in the same commit.
+- A judgment call that removes surface goes in `docs/en/DECISIONS.md`.
 
-## Maintainer Attribution
+## Commit checks
 
-Maintainer metadata should use Ali Baneshi, baneshi712@gmail.com, https://github.com/ali-baneshi where appropriate.
+Every commit must leave the tree green:
+
+```bash
+PYTHONPATH=src python scripts/validate_all.py
+python -m pytest -q
+ruff check .
+```

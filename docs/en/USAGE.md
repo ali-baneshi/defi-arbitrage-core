@@ -1,90 +1,137 @@
 # Usage
 
-This page documents local analysis usage only. It does not imply live execution, wallet handling, or deployable smart-contract behavior.
-
 ## CLI
 
-```bash
-PYTHONPATH=src python -m defi_arbitrage_core.cli examples/market_snapshot.json
-PYTHONPATH=src python -m defi_arbitrage_core.cli examples/market_snapshot.json --json
-PYTHONPATH=src python -m defi_arbitrage_core.cli examples/base_market_snapshot.json --json
-PYTHONPATH=src python -m defi_arbitrage_core.cli examples/no_opportunity_snapshot.json --min-profit-bps 1
-PYTHONPATH=src python -m defi_arbitrage_core.cli --show-policy
-PYTHONPATH=src python -m defi_arbitrage_core.cli --diagnostics
-PYTHONPATH=src python -m defi_arbitrage_core.cli examples/market_snapshot.json --validate-only
+```text
+defi-arbitrage-core SNAPSHOT [options]
+
+--json                 emit JSON instead of text
+--validate-only        validate and exit without analysis
+--min-profit-bps N     default 5.0
+--max-hops N           default 4, range 2..8
+--min-liquidity N      default 0.0
+--max-notional N       default 10000.0
+--max-results N        default 25, range 1..1000
+--version
 ```
 
-Useful flags: `--min-profit-bps`, `--max-hops`, `--min-liquidity`, `--max-notional`, `--max-results`, `--engine`, and `--rust-binary`. Expected error exit code for known validation/configuration failures is `2`.
+`SNAPSHOT` is required. Absolute, relative, symlinked, and `~` paths are normal
+filesystem paths; there is no allow-list.
 
-If you are wrapping the CLI from another tool, prefer:
+From a checkout without installing:
 
-- `--json` for opportunities
-- `--error-json` for expected failures
-- `--diagnostics` for environment and capability inspection
-- `--validate-only` when you need input validation without analysis
+```bash
+PYTHONPATH=src python -m arbcore.cli examples/market_snapshot.json --json
+```
 
-## Python API
+Examples:
+
+```bash
+defi-arbitrage-core examples/market_snapshot.json
+defi-arbitrage-core examples/base_market_snapshot.json --json
+defi-arbitrage-core examples/no_opportunity_snapshot.json --json
+defi-arbitrage-core examples/market_snapshot.json --validate-only
+defi-arbitrage-core examples/market_snapshot.json --max-hops 2 --min-profit-bps 10
+```
+
+## Exit codes
+
+| Code | Meaning |
+| --- | --- |
+| 0 | Success, including an empty opportunity list |
+| 2 | Invalid input, invalid policy, missing/unreadable snapshot, or budget exceeded |
+
+The argument parser also exits `2` for unknown flags and missing values.
+Expected errors are printed to stderr; stdout is reserved for results.
+
+## Input
+
+One UTF-8 JSON object, at most 50 MiB:
+
+```json
+{
+  "source": "example-static-snapshot",
+  "network": "polygon",
+  "timestamp": "2026-05-05T00:00:00Z",
+  "edges": [
+    {"source": "USDC", "target": "WETH", "rate": 0.00025,
+     "venue": "dex-a", "fee_bps": 30, "liquidity": 100000}
+  ]
+}
+```
+
+Rules:
+
+- `source`, `network`, and `timestamp` are optional. Missing values normalize
+  to `"local"`, `"polygon"`, and `null`. Explicit `null` is rejected.
+- `timestamp`, when present, is exactly `YYYY-MM-DDTHH:MM:SSZ`.
+- `edges` is required, non-empty, and at most 10,000 items.
+- `source`, `target`, and `rate` are required per edge.
+- `venue` defaults to `"unknown"`; `fee_bps` defaults to `0`; `liquidity`
+  defaults to `null`.
+- Symbols are trimmed and uppercased, at most 32 characters, and must differ.
+- Venues are trimmed and at most 80 characters.
+- `rate` is finite and positive.
+- `fee_bps` is finite in `[0, 10000)`.
+- `liquidity` is finite and non-negative when present.
+- Unknown keys are rejected at every level.
+- Self-loop edges are rejected. A graph with no cycle returns `[]`.
+
+Published schema: `schemas/market_snapshot.schema.json`.
+
+## Output
+
+JSON is an array ordered by `profit_bps` descending, limited by `max_results`.
+Published schema: `schemas/opportunity.schema.json`.
+
+| Field | Meaning |
+| --- | --- |
+| `network` | Snapshot label, lowercased |
+| `path` | Closed cycle; first and last asset match |
+| `venues` | One venue per hop |
+| `gross_return` | Product of fee-adjusted linear rates |
+| `profit_bps` | `(gross_return - 1) * 10000` |
+| `limiting_liquidity` | Raw minimum across hops; diagnostic only, units may differ |
+| `estimated_capacity` | Starting-asset-unit bound, capped by `max_notional` |
+| `capacity_known` | False when any hop omits liquidity |
+| `snapshot_source` | Snapshot `source` |
+| `snapshot_timestamp` | Snapshot `timestamp` or null |
+
+`--validate-only` prints `Snapshot is valid: PATH`, or with `--json`:
+
+```json
+{"ok": true, "snapshot": "examples/market_snapshot.json"}
+```
+
+## Policy semantics
+
+- Edges below `min_liquidity` are not added to the graph.
+- A cycle is reported when `profit_bps >= min_profit_bps` and
+  `estimated_capacity >= min_liquidity`.
+- Duplicate rotations of the same cycle collapse to one canonical key; the
+  highest-profit copy wins.
+- `max_results` truncates after ranking, not before searching.
+- `max_hops` counts edges in the cycle.
+- The search budget counts every outgoing edge examined. It is a hard safety
+  limit, not a performance target.
+
+## Library
 
 ```python
-from defi_arbitrage_core import AnalysisEngine, JsonFileProvider, RiskPolicy
+from arbcore import AnalysisEngine, Edge, MarketSnapshot, RiskPolicy
 
-snapshot = JsonFileProvider("examples/market_snapshot.json").load_snapshot()
-policy = RiskPolicy(min_profit_bps=5, max_hops=4, max_notional=1000)
-opportunities = AnalysisEngine(policy).analyze(snapshot)
+snapshot = MarketSnapshot(
+    edges=(Edge("USDC", "WETH", 0.00025, fee_bps=30), Edge("WETH", "USDC", 4050.0)),
+)
+opportunities = AnalysisEngine(RiskPolicy(min_profit_bps=1, max_hops=2)).analyze(snapshot)
 ```
 
-## Snapshot Format
+`AnalysisEngine.analyze` normalizes and validates the snapshot before searching.
+It raises `SnapshotError`, `PolicyError`, or `AnalysisLimitError`; all inherit
+from `ArbCoreError`.
 
-```json
-{
-  "source": "example",
-  "timestamp": "2026-05-05T00:00:00Z",
-  "edges": [
-    {"source": "USDC", "target": "WETH", "rate": 0.00025, "fee_bps": 30, "liquidity": 100000}
-  ]
-}
-```
+## Configuration
 
-`rate` is units of `target` received for one unit of `source` before fees. `liquidity` is optional and expressed in source-asset units.
-
-The output includes `capacity_known`, `snapshot_source`, and `snapshot_timestamp`. `estimated_capacity` is expressed in the starting asset's units after converting each supplied hop liquidity bound through the preceding linear rates. `limiting_liquidity` is only a raw diagnostic minimum and may combine different asset units. Missing liquidity does not make capacity trustworthy: it produces `capacity_known: false`.
-
-This is nominal analysis only. The core does not model slippage, gas, token decimals, latency, MEV, or executable venue depth.
-
-## Contract Validation
-
-```bash
-PYTHONPATH=src python scripts/validate_contracts.py
-PYTHONPATH=src python scripts/validate_contracts.py --json
-```
-
-This validates Solidity and Vyper templates without compiling or deploying them.
-
-## Full Baseline Validation
-
-```bash
-PYTHONPATH=src python scripts/validate_all.py
-```
-
-Use `--include-rust` to include optional Rust service validation when Cargo is available.
-
-## Structured Errors
-
-`--error-json` emits expected `ArbCoreError` failures as JSON on stderr with `ok: false`, an error type, and a safe message. Use it for automation that needs deterministic failure handling.
-
-## Multi-Network Usage Pattern
-
-The same CLI and Python API work for multiple networks because network identity lives in the snapshot contract:
-
-```json
-{
-  "source": "research-snapshot",
-  "network": "arbitrum",
-  "timestamp": "2026-05-05T00:00:00Z",
-  "edges": [
-    {"source": "USDC", "target": "WETH", "rate": 0.00025}
-  ]
-}
-```
-
-This repository does not do cross-chain routing, bridging, or chain-specific execution. It provides a reusable single-snapshot analysis core that larger systems can compose per network.
+There is no environment-variable configuration and no default snapshot. Pass a
+path and flags explicitly. This keeps runs reproducible and avoids hidden
+precedence.

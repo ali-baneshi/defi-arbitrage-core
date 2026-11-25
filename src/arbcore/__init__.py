@@ -10,7 +10,6 @@ from arbcore.contracts import (
     report_to_json,
     validate_contract_workspace,
 )
-from arbcore.diagnostics import collect_diagnostics, diagnostics_json
 from arbcore.engine import AnalysisEngine
 from arbcore.errors import (
     AnalysisLimitError,
@@ -43,8 +42,6 @@ __all__ = [
     "ContractValidationReport",
     "Edge",
     "JsonFileProvider",
-    "collect_diagnostics",
-    "diagnostics_json",
     "JsonReporter",
     "MarketDataProvider",
     "MarketSnapshot",

@@ -3,7 +3,7 @@ PIP_INDEX_URL ?=
 PIP_EXTRA_INDEX_URL ?=
 PIP_FLAGS ?= --no-build-isolation
 
-.PHONY: bootstrap validate validate-rust test lint docker-build docker-validate
+.PHONY: bootstrap validate test lint benchmark docker-build docker-validate
 
 bootstrap:
 	$(PYTHON) -m venv .venv
@@ -13,14 +13,14 @@ bootstrap:
 validate:
 	PYTHONPATH=src $(PYTHON) scripts/validate_all.py
 
-validate-rust:
-	PYTHONPATH=src $(PYTHON) scripts/validate_all.py --include-rust
-
 test:
 	pytest
 
 lint:
 	ruff check .
+
+benchmark:
+	$(PYTHON) scripts/benchmark.py
 
 docker-build:
 	docker build -t defi-arbitrage-core:local .

@@ -1,73 +1,49 @@
-> **PUBLIC ALPHA SNAPSHOT — RELEASE GATED.** This repository is already public, but this current version remains gated by security, history, and documentation evidence; `public_release_ready` is not yet true. Do not use in production. See [SECURITY.md](SECURITY.md) and run `PYTHONPATH=src python scripts/release_readiness.py` to check current status.
+> **Alpha, offline analysis only.** This project ranks nominal opportunity
+> candidates from a local snapshot. It does not trade, sign, fetch prices, or
+> claim executable profit. See [docs/en/PRODUCT.md](docs/en/PRODUCT.md).
 
 # defi-arbitrage-core
 
 [![CI](https://github.com/ali-baneshi/defi-arbitrage-core/actions/workflows/ci.yml/badge.svg)](https://github.com/ali-baneshi/defi-arbitrage-core/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 ![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)
-![Rust](https://img.shields.io/badge/Rust-1.75%2B-orange.svg)
-![Shell](https://img.shields.io/badge/Shell-Bash-4EAA25.svg)
-![Solidity](https://img.shields.io/badge/Solidity-smart--contracts-363636.svg)
-![Vyper](https://img.shields.io/badge/Vyper-smart--contracts-7A42F4.svg)
-![Dockerfile](https://img.shields.io/badge/Docker-containerized-2496ED.svg)
-![Makefile](https://img.shields.io/badge/Build-Make-6D00CC.svg)
 
-A boundary-driven DeFi arbitrage analysis core focused on deterministic validation,
-multi-network market modeling, and reproducible off-chain opportunity evaluation.
+A deterministic, dependency-free analyzer that turns one validated JSON
+snapshot of directed exchange quotes into ranked candidate cycles.
 
-It is built for researchers, quantitative developers, protocol analysts, and backend teams that need reusable analysis infrastructure rather than a finished trading product or execution bot.
+## What it does
 
-## What This Project Does
+- Loads a local JSON snapshot.
+- Rejects malformed, ambiguous, or out-of-bounds input.
+- Enumerates simple cycles up to a hop limit with a deterministic search budget.
+- Applies a nominal risk policy: minimum profit, minimum liquidity, maximum
+  notional, maximum results.
+- Prints a text report or stable JSON.
 
-- Validates local DeFi market snapshots with fail-closed rules
-- Analyzes bounded exchange-rate cycles across multiple EVM-style networks
-- Produces stable text and JSON candidate-opportunity output for downstream systems
-- Exposes extension points for providers, reporters, policies, and optional Rust-backed analysis
+## What it does not do
 
-## What This Project Does Not Do
+- No RPC, price feeds, wallets, private keys, signing, or transaction submission.
+- No contract compilation, deployment, or auditing.
+- No cross-chain routing. A snapshot names one `network`; the label is copied
+  to output and is not verified.
+- No slippage, gas, latency, MEV, token decimals, order-book depth, or
+  settlement modeling.
 
-- It does not collect live RPC data
-- It does not manage wallets, keys, signing, or transaction submission
-- It does not claim on-chain executability or profit realization
-- It does not compile, deploy, or audit smart contracts
+## Install and run
 
-## Why It Exists
-
-A lot of DeFi repositories mix experimentation, execution logic, secrets, and incomplete infrastructure. This project keeps a narrower boundary: deterministic offline analysis with explicit contracts, reproducible validation, and a clean path for extension.
-
-## Technology Stack
-
-- Python is the canonical implementation and the default runtime
-- Rust is optional and isolated behind a process boundary for acceleration-sensitive workflows
-- JSON schemas define the public input, output, diagnostics, and release-readiness contracts
-
-## Current Scope
-
-The current release is an offline alpha MVP for analysis infrastructure. It is suitable for local validation, simulation, route analysis, integration testing, reviewer evaluation, and as a foundation for larger systems that add their own ingestion and execution layers.
-
-Returned profit is nominal: it is derived from supplied linear rates and fees. The core does not model slippage, gas, latency, MEV, token decimals, or executable AMM/order-book depth. Treat `estimated_capacity` as a starting-asset-unit bound from supplied liquidity, not as executable size.
-
-## Minimal Example
-
-Input snapshot:
-
-```json
-{
-  "source": "example-base-snapshot",
-  "network": "base",
-  "timestamp": "2026-05-05T00:00:00Z",
-  "edges": [
-    {"source": "USDC", "target": "ETH", "rate": 0.000255, "venue": "dex-base-a", "fee_bps": 25, "liquidity": 85000},
-    {"source": "ETH", "target": "DAI", "rate": 3985, "venue": "dex-base-b", "fee_bps": 30, "liquidity": 90000},
-    {"source": "DAI", "target": "USDC", "rate": 1.003, "venue": "dex-base-c", "fee_bps": 5, "liquidity": 100000}
-  ]
-}
-```
-
-Run:
+From a clean checkout:
 
 ```bash
-PYTHONPATH=src python -m defi_arbitrage_core.cli examples/base_market_snapshot.json --json
+python -m venv .venv
+source .venv/bin/activate
+pip install -e '.[dev]'
+defi-arbitrage-core examples/market_snapshot.json --json
+```
+
+Without installing:
+
+```bash
+PYTHONPATH=src python -m arbcore.cli examples/market_snapshot.json --json
 ```
 
 Output:
@@ -75,229 +51,110 @@ Output:
 ```json
 [
   {
-    "network": "base",
-    "path": ["DAI", "USDC", "ETH", "DAI"],
-    "venues": ["dex-base-c", "dex-base-a", "dex-base-b"],
-    "gross_return": 1.013118627069043,
-    "profit_bps": 131.18627069043097,
-    "limiting_liquidity": 85000.0,
+    "network": "polygon",
+    "path": ["USDC", "WETH", "DAI", "USDC"],
+    "venues": ["dex-a", "dex-b", "dex-c"],
+    "gross_return": 1.0079427572346378,
+    "profit_bps": 79.42757234637776,
+    "limiting_liquidity": 100000.0,
     "estimated_capacity": 10000.0,
     "capacity_known": true,
-    "snapshot_source": "example-base-snapshot",
+    "snapshot_source": "example-static-snapshot",
     "snapshot_timestamp": "2026-05-05T00:00:00Z"
   }
 ]
 ```
 
-## Quick Start
+Text output:
 
-Fastest no-install verification:
-
-```bash
-PYTHONPATH=src python -m defi_arbitrage_core.cli examples/market_snapshot.json
-PYTHONPATH=src python -m defi_arbitrage_core.cli --diagnostics
-PYTHONPATH=src python -m defi_arbitrage_core.cli --self-check
-PYTHONPATH=src python scripts/validate_all.py
+```text
+[polygon] USDC -> WETH -> DAI -> USDC | 79.43 bps | capacity: 1e+04 | venues: dex-a, dex-b, dex-c
 ```
 
-Editable install when dev tools are available:
+## Snapshot format
+
+```json
+{
+  "source": "example-static-snapshot",
+  "network": "polygon",
+  "timestamp": "2026-05-05T00:00:00Z",
+  "edges": [
+    {"source": "USDC", "target": "WETH", "rate": 0.00025,
+     "venue": "dex-a", "fee_bps": 30, "liquidity": 100000}
+  ]
+}
+```
+
+`rate` means units of `target` per one unit of `source` before fees.
+`liquidity` is expressed in the edge's source-asset units and is used only as
+a linear capacity bound. See [docs/en/USAGE.md](docs/en/USAGE.md) for the full
+contract.
+
+## CLI
+
+```text
+defi-arbitrage-core SNAPSHOT [options]
+
+--json                 emit JSON instead of text
+--validate-only        validate and exit without analysis
+--min-profit-bps N     default 5.0
+--max-hops N           default 4, range 2..8
+--min-liquidity N      default 0.0
+--max-notional N       default 10000.0
+--max-results N        default 25, range 1..1000
+--version
+```
+
+Exit code `0` means success. Exit code `2` means invalid input, invalid policy,
+an unreadable snapshot, or an exceeded analysis budget. Results go to stdout;
+errors go to stderr.
+
+## Limits
+
+- Snapshot file: 50 MiB, 10,000 edges.
+- Asset symbols: 32 characters, trimmed and uppercased.
+- Node out-degree: 500.
+- Search budget: 250,000 edge expansions. Larger searches fail with
+  `AnalysisLimitError` rather than running unbounded.
+- `max_hops` is capped at 8, but a dense graph can exhaust the budget well
+  before that.
+
+The budget makes runtime deterministic and bounded, not fast for every input.
+See [docs/en/ARCHITECTURE.md](docs/en/ARCHITECTURE.md).
+
+## Economic model
+
+Rates are scalar and linear. Fees are percentage deductions. Liquidity is a
+quote bound, not executable depth. `profit_bps` is nominal. A positive result
+means "this cycle passes the stated arithmetic and policy", not "this trade
+would make money".
+
+## Validation
 
 ```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install -e '.[dev]' --no-build-isolation
-defi-arbitrage-core examples/market_snapshot.json --json
-pytest
+PYTHONPATH=src python scripts/validate_all.py
+python -m pytest -q
 ruff check .
+python scripts/benchmark.py
 ```
 
-If your environment cannot reach public Python registries, install using a reachable mirror:
-
-```bash
-make bootstrap PIP_INDEX_URL=https://<your-mirror>/simple
-```
-
-Or with an additional fallback index:
-
-```bash
-make bootstrap PIP_INDEX_URL=https://<primary-mirror>/simple PIP_EXTRA_INDEX_URL=https://<secondary-mirror>/simple
-```
-
-Optional Rust validation:
-
-```bash
-cargo build --manifest-path rust/arbcore-rs/Cargo.toml
-PYTHONPATH=src python scripts/validate_rust_service.py
-PYTHONPATH=src python -m defi_arbitrage_core.cli examples/market_snapshot.json --engine auto --rust-binary rust/arbcore-rs/target/debug/defi-arbitrage-core-rs
-```
-
-## Docker
-
-Build a reproducible runtime image:
-
-```bash
-docker build -t defi-arbitrage-core:local .
-```
-
-Run the example snapshot inside the container:
-
-```bash
-docker run --rm defi-arbitrage-core:local examples/market_snapshot.json --json
-```
-
-Run the full repository validation suite inside Docker:
-
-```bash
-docker run --rm --entrypoint python defi-arbitrage-core:local scripts/validate_all.py
-```
-
-## Architecture At A Glance
-
-- `providers` load untrusted local snapshots
-- `validation` enforces schema and business rules
-- `engine` computes bounded cycles deterministically
-- `reporters` emit stable human-readable and JSON output
-- `service` wraps the optional Rust analyzer behind a safe process boundary
-- `contracts` validates Solidity and Vyper templates as repository artifacts
-
-## Production And CI Notes
-
-This repository is intended to run cleanly in local environments, GitHub Actions, and containerized workflows. The baseline validation path is dependency-light and network-independent after installation. Optional layers such as Rust acceleration and pytest/ruff checks are additive, not foundational.
-
-Key commands:
-
-```bash
-PYTHONPATH=src python scripts/validate_all.py
-PYTHONPATH=src python scripts/validate_all.py --include-rust
-PYTHONPATH=src python scripts/release_readiness.py --json
-```
-
-## Troubleshooting Build And Test Failures
-
-- `zsh: no matches found: .[dev]`: quote extras exactly as `'.[dev]'`.
-- `externally-managed-environment`: create a virtualenv (`python -m venv .venv`) and install there.
-- `Installing build dependencies` hangs: use `--no-build-isolation` and configure a mirror index.
-- `ModuleNotFoundError: arbcore`: run with `PYTHONPATH=src` when not installed.
-- `pytest: No module named pytest`: run `make bootstrap` first or install dev extras in `.venv`.
-
-## Open-Source Readiness And Hardening
-
-Before treating the current public snapshot as fully release-ready, treat this checklist as required:
-
-- Reproducibility: pin and audit dependency versions in CI and container builds.
-- Security: enforce secret scanning, dependency scanning, and signed release artifacts.
-- Stability: require schema compatibility checks and deterministic output regression tests.
-- Operability: publish explicit support matrix (Python/Rust versions, platforms, optional features).
-- Governance: keep `SECURITY.md`, `CONTRIBUTING.md`, and release process aligned with actual workflow.
-
-Detailed execution plan: `docs/en/OPEN_SOURCE_RELEASE_PLAN.md`.
-
-## Validation As A First-Class Feature
-
-- JSON schemas document the public contracts
-- Runtime validation rejects malformed or unsafe input early
-- Negative-case scripts prove that bad inputs fail deterministically
-- Output-contract checks keep CLI, diagnostics, and release reports stable
-
-Validation commands:
-
-```bash
-PYTHONPATH=src python -m defi_arbitrage_core.cli examples/market_snapshot.json --validate-only
-PYTHONPATH=src python scripts/validate_contracts.py
-PYTHONPATH=src python scripts/demo_workflow.py
-PYTHONPATH=src python scripts/validate_negative_cases.py
-PYTHONPATH=src python scripts/validate_schema_consistency.py
-```
-
-## Who Should Use This Infrastructure
-
-This project is a good fit for:
-
-- researchers validating local market-structure ideas
-- quant and market-structure teams comparing route quality across networks
-- backend and data-platform engineers building simulation, scoring, or review pipelines
-- protocol, analytics, and infrastructure companies that need a reusable analysis kernel
-
-It is a poor fit for anyone looking for a wallet-integrated bot, live execution engine, or turnkey production trading stack.
-
-## Choose Your Path
-
-- Researchers: start with `examples/` and `PYTHONPATH=src python -m defi_arbitrage_core.cli examples/market_snapshot.json --json`.
-- Integrators: use JSON output plus schemas in `schemas/` and run `PYTHONPATH=src python scripts/validate_output_contracts.py`.
-- Maintainers: run `PYTHONPATH=src python scripts/validate_all.py --include-rust` and review `docs/en/OPEN_SOURCE_RELEASE_PLAN.md`.
-- Security reviewers: start with `SECURITY.md`, then run `PYTHONPATH=src python scripts/release_readiness.py --json`.
-
-## Practical Use Cases
-
-### For Individual Researchers
-- **Academic Research**: Validate theoretical arbitrage models against curated market snapshots without operational overhead
-- **Strategy Prototyping**: Test path-finding algorithms and cycle-detection heuristics in a controlled environment
-- **Educational Projects**: Learn DeFi market mechanics through reproducible, deterministic analysis
-- **Portfolio Analysis**: Evaluate historical market inefficiencies across multiple networks for research papers
-
-### For Quantitative Trading Teams
-- **Route Quality Benchmarking**: Compare arbitrage path efficiency across Base, Ethereum, Arbitrum, Polygon, and other EVM networks
-- **Market Structure Analysis**: Identify liquidity topology patterns and venue-specific characteristics
-- **Backtesting Foundation**: Use as the deterministic analysis kernel in larger backtesting pipelines
-- **Opportunity Scoring**: Generate structured candidate opportunities for downstream risk and execution systems
-
-### For Protocol Development Teams
-- **Liquidity Design Validation**: Test how protocol changes affect arbitrage dynamics before mainnet deployment
-- **MEV Impact Assessment**: Analyze potential extractable value patterns in protocol designs
-- **Cross-Protocol Integration**: Evaluate routing efficiency when integrating with other DeFi protocols
-- **Simulation Infrastructure**: Embed as the analysis layer in protocol simulation environments
-
-### For Data Platform & Analytics Companies
-- **Market Intelligence Products**: Build dashboards and alerting systems on top of structured opportunity data
-- **Research-as-a-Service**: Offer deterministic market analysis to institutional clients
-- **Data Pipeline Integration**: Use as a validation and enrichment stage in broader DeFi data workflows
-- **Compliance & Reporting**: Generate auditable, reproducible market analysis reports
-
-### For Backend Engineering Teams
-- **Internal Tooling**: Provide developers with a clean, testable foundation for DeFi analysis features
-- **Microservice Architecture**: Deploy as a stateless analysis service behind API gateways
-- **CI/CD Integration**: Use validation scripts as quality gates for market data pipelines
-- **Developer Onboarding**: Offer new team members a well-documented, bounded system to learn from
-
-### For Infrastructure & DevOps Teams
-- **Containerized Workflows**: Deploy reproducible analysis environments via Docker
-- **Batch Processing**: Schedule periodic snapshot analysis jobs in orchestration systems (Airflow, Kubernetes CronJobs)
-- **Multi-Region Deployment**: Run identical analysis logic across geographic regions with local snapshots
-- **Observability Integration**: Emit structured JSON for ingestion into monitoring and logging platforms
-
-### For Financial Services & Compliance
-- **Audit Trail Generation**: Produce deterministic, timestamped analysis records for regulatory review
-- **Risk Assessment**: Evaluate market opportunity characteristics before capital allocation decisions
-- **Compliance Monitoring**: Validate that analysis workflows meet internal control requirements
-- **Third-Party Review**: Provide external auditors with transparent, reproducible analysis artifacts
-
-### What This Infrastructure Does NOT Support
-- **Live Trading Execution**: No wallet management, transaction signing, or on-chain execution
-- **Real-Time Data Collection**: No RPC polling, WebSocket streams, or mempool monitoring
-- **Production Trading Bots**: No position management, capital allocation, or P&L tracking
-- **Smart Contract Deployment**: No compilation, gas estimation, or mainnet interaction
-- **Custody & Key Management**: No private key storage, HSM integration, or signing infrastructure
-
-### Adoption Anti-Patterns to Avoid
-- Treating this as a complete trading system (it is an analysis kernel, not an execution platform)
-- Expecting real-time performance without adding your own data ingestion layer
-- Assuming contract templates are production-ready without independent audit
-- Using this for live trading without building proper risk controls and execution infrastructure
-- Deploying to production without understanding the trust boundaries and validation semantics
+`validate_all.py` compiles the tree and runs the test suite. The benchmark
+records representative and worst-case search behavior. See
+[docs/en/VALIDATION.md](docs/en/VALIDATION.md).
 
 ## Documentation
 
-Start here for deeper review:
+- [docs/en/PRODUCT.md](docs/en/PRODUCT.md) — promise, contracts, and the
+  production-ready definition.
+- [docs/en/USAGE.md](docs/en/USAGE.md) — CLI, exit codes, JSON, and library API.
+- [docs/en/ARCHITECTURE.md](docs/en/ARCHITECTURE.md) — pipeline, bounds, and
+  trust boundaries.
+- [docs/en/VALIDATION.md](docs/en/VALIDATION.md) — what each check proves.
+- [docs/en/AUDIT.md](docs/en/AUDIT.md) — why the repository was reduced.
+- [docs/en/DECISIONS.md](docs/en/DECISIONS.md) — judgment calls and reversal paths.
+- [docs/en/RELEASE_CHECKLIST.md](docs/en/RELEASE_CHECKLIST.md) — maintainer
+  checklist.
 
-- `docs/en/README.md`
-- `docs/en/README_DETAILS.md`
-- `docs/en/ADVANCED_README.md`
-- `docs/en/PUBLIC_RELEASE_GUIDE.md`
-- `docs/en/STATUS.md`
-- `docs/en/PROJECT_BOUNDARIES.md`
+## License
 
-Persian and Chinese documentation are also included under `docs/fa/` and `docs/zh/`.
-
-## GitHub Metadata
-
-Recommended repository topics: `defi`, `arbitrage`, `market-analysis`, `quant-research`, `graph-algorithms`, `json-schema`, `rust`, `python`, `developer-tools`, `infrastructure`.
+MIT. See [LICENSE](LICENSE).

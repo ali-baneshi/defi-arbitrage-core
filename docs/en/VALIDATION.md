@@ -1,119 +1,83 @@
-# Validation Guide
+# Validation
 
-This repository has a dependency-free validation baseline for constrained environments and optional checks for prepared CI/dev environments.
-
-## Validation Layers
-
-- Schema validation: public JSON shapes documented under `schemas/`
-- Runtime/domain validation: fail-closed checks in Python and Rust adapters
-- Workflow validation: scripts that prove examples, outputs, and release reports behave deterministically
-- Negative validation: intentionally bad inputs that must fail
-
-## Baseline Command
+## Commands
 
 ```bash
 PYTHONPATH=src python scripts/validate_all.py
-```
-
-This runs:
-
-1. Python compile checks for `src`, `tests`, `scripts`, and `examples`.
-2. Dependency-free unit checks in `scripts/run_unit_checks.py`.
-3. Example snapshot validation and JSON analysis workflow.
-4. Custom provider example.
-5. Solidity/Vyper contract manifest and template validation.
-6. Repository metadata checks for required docs, schemas, README commands, and tracked generated files.
-7. Negative validation scenarios for bad snapshots and unsafe contract manifest changes.
-8. Deterministic demo workflow with machine-readable output inspection.
-9. Release readiness report that separates local validation from public release gates.
-10. Active-tree secret scan.
-
-For an authenticated remote review, run `PYTHONPATH=src python scripts/audit_public_remote.py`.
-It clones the advertised public refs into a temporary mirror and scans them, but
-does not prove that server-side unreachable objects were removed.
-
-After the hardening changes are committed, `PYTHONPATH=src python scripts/verify_public_snapshot.py`
-runs the full validation guard for the current public snapshot. It never creates
-a tag, pushes, or rewrites the public branch.
-
-Use this when `pytest`, `ruff`, or other optional tools are unavailable.
-
-## Machine-Readable Workflows
-
-```bash
-PYTHONPATH=src python scripts/demo_workflow.py
-PYTHONPATH=src python scripts/validate_negative_cases.py
-PYTHONPATH=src python scripts/validate_contracts.py --json
-PYTHONPATH=src python scripts/release_readiness.py --json
-PYTHONPATH=src python scripts/validate_release_evidence.py --example
-```
-
-`demo_workflow.py` verifies that the profitable example produces a positive opportunity, the no-opportunity example returns an empty list, and contract validation succeeds.
-
-## Optional Rust Validation
-
-```bash
-PYTHONPATH=src python scripts/validate_all.py --include-rust
-cargo test --manifest-path rust/arbcore-rs/Cargo.toml
-```
-
-Rust remains optional. Python must remain usable without Cargo.
-
-## Optional Dev Tool Validation
-
-```bash
 python -m pytest -q
-python -m ruff check .
+ruff check .
+python scripts/benchmark.py
 ```
 
-Run these only where the tools are already installed or in CI. Do not install new packages in constrained environments.
+`validate_all.py` compiles `src`, `tests`, `scripts`, and `examples`, then runs
+the pytest suite. `ruff` is a separate dev check. The benchmark is not part of
+the pass/fail gate because it measures, rather than asserts, performance.
 
-## Interpreting Failure
+## What each check proves
 
-- Compile failure: fix syntax/import errors first.
-- Example workflow failure: inspect snapshot schema and CLI output.
-- Contract validation failure: inspect finding code and path; do not bypass errors.
-- Repository validation failure: restore missing docs/schemas or remove tracked generated files.
-- Secret scan failure: remove the value and rotate if it may be real.
+| Check | Proves |
+| --- | --- |
+| `compileall` | Every Python file parses and imports are syntactically valid |
+| `pytest` | Documented behavior, adversarial input, bounds, determinism, and CLI contracts hold |
+| `ruff` | Style and common-error rules pass |
+| `benchmark.py` | Search behavior is measured on complete graphs and the budget holds |
+| Clean-venv install | The documented install command works without `PYTHONPATH` |
+| Example CLI runs | The canonical snapshots produce the documented results |
 
-## Release Readiness Report
+## Covered failure modes
 
-`PYTHONPATH=src python scripts/release_readiness.py --json` intentionally reports `public_release_ready: false` until manual gates are completed: historical credential rotation, exclusion of old `.git` backups, independent history scanning, and localization scope/refresh. A `true` local validation result is not permission to publish.
+The test suite includes:
 
-The readiness command reads the non-secret `release/release-evidence.json`
-attestation when present. The repository ships only a blocked example; do not
-replace blocked statuses with claims that have not been externally verified.
+- malformed JSON, non-UTF-8 files, missing files, and directories;
+- unknown snapshot and edge keys;
+- explicit `null` optional fields;
+- non-finite and out-of-range rates, fees, and liquidity;
+- self-loops and empty edge lists;
+- duplicate/parallel edges and disconnected or acyclic graphs;
+- oversized symbols and venues;
+- invalid policy values;
+- search-budget exhaustion;
+- CLI missing file, unknown flag, `--json`, `--validate-only`, stdout/stderr
+  separation, and exit codes;
+- byte-identical repeated JSON output;
+- schema/runtime parity for the published contracts.
 
-## Fail-Closed Behavior Covered
+## Schema parity
 
-Dependency-free checks cover invalid snapshots, invalid metadata, unbounded risk policy values, contract entrypoint drift, contract source-hash drift, and non-local contract network metadata. These checks are intentionally negative: they prove unsafe or ambiguous inputs fail with non-zero exits.
+`schemas/market_snapshot.schema.json` and `schemas/opportunity.schema.json` are
+the published contracts. Tests validate accepted payloads against the schemas
+and confirm that boundary constants in the schemas match `arbcore.models`.
+When runtime validation and a schema disagree, that is a bug; do not document
+around it.
 
-## Schema Validation vs Domain Validation
+## Benchmark
 
-Schemas document stable machine-readable shapes. Runtime validation goes further and enforces domain rules such as:
+```bash
+python scripts/benchmark.py
+python scripts/benchmark.py --timeout 10 --case 12:8
+```
 
-- positive rates
-- bounded hop and result limits
-- object-only metadata
-- explicit non-empty network labels
-- Rust opportunity parity and fail-closed parsing
+Each case runs in a subprocess so a pathological search cannot hang the parent.
+The default matrix covers 8 and 12 asset complete graphs at 3-8 hops. The
+12-asset, 8-hop case must return `AnalysisLimitError`, not run unbounded.
 
-When the two differ, runtime validation is authoritative for safety.
+## Clean install
 
-## CI Coverage Expectations
+```bash
+python -m venv /tmp/arbcore-venv
+/tmp/arbcore-venv/bin/pip install .
+/tmp/arbcore-venv/bin/defi-arbitrage-core examples/market_snapshot.json --json
+```
 
-`PYTHONPATH=src python scripts/validate_repository.py` checks that CI runs optional `ruff`/`pytest` in prepared environments, the dependency-free baseline with Rust included, the release readiness report, and Rust unit tests. This makes CI drift visible without requiring those tools locally.
+Run this from the repository root. It must not require `PYTHONPATH` or any
+optional tool.
 
-## Structured CLI Checks
+## Interpreting failure
 
-The validation suite exercises `--diagnostics`, JSON validation-only output, and `--error-json` failure output so wrappers can consume deterministic success and failure states.
-
-
-## Drift Checks Added For Reviewers
-
-Repository validation now checks that `docs/en/PROJECT_BOUNDARIES.md` exists and carries the canonical boundary markers, and that `scripts/release_readiness.py` exposes separate local, reviewer, open-source, public-release, and production readiness fields. This keeps status claims machine-checkable instead of relying only on prose.
-
-
-## Python/Rust Parity
-
-`PYTHONPATH=src python scripts/validate_rust_service.py` now checks more than process startup: it compares Python and Rust JSON opportunities on canonical fixtures and verifies fail-closed Rust behavior for invalid timestamps, invalid metadata, and excessive policy bounds. This protects the optional analyzer from silently drifting away from the Python contracts.
+- Compile failure: fix syntax or imports first.
+- Test failure: treat the contract in `PRODUCT.md` and the schema as
+  authoritative; fix the code, not the assertion.
+- Budget failure: reduce `--max-hops`, raise `--min-liquidity`, or split the
+  snapshot. Do not raise the budget without a new benchmark.
+- Benchmark timeout: the budget is not being enforced; investigate before
+  merging.

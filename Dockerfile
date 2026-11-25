@@ -5,17 +5,12 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
-COPY pyproject.toml README.md ./
+COPY pyproject.toml README.md LICENSE ./
 COPY src ./src
 COPY examples ./examples
 COPY schemas ./schemas
 COPY scripts ./scripts
-COPY contracts ./contracts
-COPY docs ./docs
 COPY tests ./tests
-COPY .env.example ./
-COPY rust ./rust
-COPY CHANGELOG.md CONTRIBUTING.md SECURITY.md RELEASE.md LICENSE ./
 
 RUN pip install --no-cache-dir .
 

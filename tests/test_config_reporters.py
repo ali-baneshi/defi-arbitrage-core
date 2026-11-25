@@ -1,17 +1,7 @@
 import json
 
-import pytest
-
-from arbcore import ConfigurationError
-from arbcore.config import Settings
 from arbcore.models import Opportunity
 from arbcore.reporters import JsonReporter, TextReporter
-
-
-def test_settings_reject_invalid_env(monkeypatch):
-    monkeypatch.setenv("ARBCORE_MAX_HOPS", "bad")
-    with pytest.raises(ConfigurationError):
-        Settings.from_env()
 
 
 def test_reporters_render_outputs():
